@@ -19,6 +19,10 @@ app.options("*", cors());
 
 app.use("/users", user);
 
+app.get("/", (req, res) => {
+	res.json({});
+});
+
 app.use(function (err, req, res, next) {
 	console.log(err);
 	res.status(500).json({ msg: "Internal Server Error", error: err });
