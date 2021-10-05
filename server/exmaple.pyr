@@ -1,0 +1,15 @@
+post("localhost:7500/users",
+	json={
+	"name" : "Ramana",
+	"email": "ramanakatta@gmail.com",
+	"password": "sarvani"
+	}
+	)
+
+put("localhost:7500/users/1", json={
+	"email": "sarvani@gmail.com"
+	})
+
+get("localhost:7500/users/1")
+
+delete('localhost:7500/users/3')
