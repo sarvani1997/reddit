@@ -1,11 +1,25 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
-import './index.css'
-import App from './App'
+import React from "react";
+import ReactDOM from "react-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import "./index.css";
+
+import SignUpForm from "./SignUpFormPage";
+
+const App = () => {
+  return (
+    <Switch>
+      <Route path="/sign_up">
+        <SignUpForm />
+      </Route>
+    </Switch>
+  );
+};
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-)
+  <Router>
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  </Router>,
+  document.getElementById("root")
+);
