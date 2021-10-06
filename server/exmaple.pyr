@@ -18,3 +18,28 @@ post('localhost:7500/users/log_in', json={
 'email': "sarvani@gmail.com",
 'password': "sarvani"
 	})
+
+
+post('localhost:7500/subreddit', headers = {
+	'authorization': 'Bearer lEnxC7NSxrXQl8qApRFbAzTvWHPo4FLm'
+	},
+	json= {
+	'name': 'sarvani',
+	'nick': 'sar',
+
+	}
+	)
+
+put('localhost:7500/subreddit/1', headers = {
+	'authorization': 'Bearer lEnxC7NSxrXQl8qApRFbAzTvWHPo4FLm'
+	},
+	json= {
+	'name': 'ramana',
+	'nick': 'katta',
+	'userId': 1,
+	}
+	)
+
+get('localhost:7500/subreddit', headers = {
+	'authorization': 'Bearer lEnxC7NSxrXQl8qApRFbAzTvWHPo4FLm'
+	},)

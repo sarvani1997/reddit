@@ -27,6 +27,14 @@ async function updateUser(id, data) {
 	});
 }
 
+async function deleteUser(id) {
+	await User.destroy({
+		where: {
+			id,
+		},
+	});
+}
+
 async function loginUser(data) {
 	let user = await User.unscoped().findOne({
 		where: {
@@ -52,12 +60,38 @@ async function loginUser(data) {
 	}
 }
 
-async function deleteUser(id) {
-	await User.destroy({
-		where: {
-			id,
-		},
-	});
+async function validateToken(authorization, res) {
+	if (authorization && authorization.includes("Bearer ")) {
+		let token = authorization.slice(7);
+		let logins = await Login.findAll({
+			where: {
+				token,
+			},
+		});
+		if (logins.length === 0) {
+			return false;
+		} else {
+			if (logins[0].userId) {
+				res.locals.userId = logins[0].userId;
+			}
+			return true;
+		}
+	} else {
+		return false;
+	}
+}
+
+async function authMiddleware(req, res, next) {
+	try {
+		let valid = await validateToken(req.get("authorization"), res);
+		if (valid) {
+			next();
+		} else {
+			res.status(401).end();
+		}
+	} catch (err) {
+		next(err);
+	}
 }
 
 userRouter.post("/", async (req, res, next) => {
@@ -110,4 +144,4 @@ userRouter.post("/log_in", async (req, res, next) => {
 	}
 });
 
-module.exports = userRouter;
+module.exports = { userRouter, authMiddleware };

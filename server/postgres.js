@@ -49,4 +49,25 @@ User.hasMany(Login, {
   foreignKey: "userId",
 });
 
+const SubReddit = sequelize.define("SubReddit", {
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  nick: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+  },
+});
+
+SubReddit.belongsTo(User, {
+  onDelete: "CASCADE",
+  foreignKey: "userId",
+});
+
+User.hasMany(SubReddit, {
+  foreignKey: "userId",
+});
+
 module.exports = sequelize;

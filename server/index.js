@@ -5,7 +5,8 @@ const { prettify } = require("sql-log-prettifier");
 
 const luxon = require("luxon");
 const postgres = require("./postgres");
-const user = require("./userRouter");
+const { userRouter, authMiddleware } = require("./userRouter");
+const subReddit = require("./subRedditRouter");
 
 luxon.Settings.defaultZoneName = "Asia/Kolkata";
 
@@ -17,7 +18,8 @@ app.use(cors());
 
 app.options("*", cors());
 
-app.use("/users", user);
+app.use("/users", userRouter);
+app.use("/subreddit", authMiddleware, subReddit);
 
 app.get("/", (req, res) => {
 	res.json({});
@@ -45,6 +47,6 @@ app.listen(port, () => {
 		});
 		console.log("Connection has been established successfully.");
 	} catch (error) {
-		console.error("Unable to connect to the database:", error);
+		console.error("Unable to connect to the database: ", error);
 	}
 })();
