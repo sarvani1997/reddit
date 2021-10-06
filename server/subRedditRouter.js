@@ -4,6 +4,8 @@ const express = require("express");
 
 const subRedditRouter = express.Router();
 const { SubReddit } = sequelize.models;
+const { authMiddleware } = require("./userRouter");
+const { StatusCodes } = require("http-status-codes");
 
 const subRedditAllowedFields = ["name", "nick"];
 
@@ -26,6 +28,7 @@ async function getAllSubReddits() {
 }
 
 async function updateSubReddit(id, data) {
+	data = _.pick(data, subRedditAllowedFields);
 	await SubReddit.update(data, {
 		where: {
 			id,
@@ -33,18 +36,24 @@ async function updateSubReddit(id, data) {
 	});
 }
 
-async function DeleteSubReddit(id) {
-	await SubReddit.destroy({
-		where: {
-			id,
-		},
-	});
+async function deleteSubReddit(id, userId) {
+	let subreddit = await getSubReddit(id);
+	if (subreddit.userId === userId) {
+		await SubReddit.destroy({
+			where: {
+				id,
+			},
+		});
+		return true;
+	} else {
+		return false;
+	}
 }
 
-subRedditRouter.post("/", async (req, res, next) => {
+subRedditRouter.post("/", authMiddleware, async (req, res, next) => {
 	try {
 		let subReddit = await createSubReddit(req.body, res.locals.userId);
-		res.json(subReddit);
+		res.status(StatusCodes.CREATED).json(subReddit);
 	} catch (err) {
 		next(err);
 	}
@@ -54,7 +63,7 @@ subRedditRouter.get("/:id", async (req, res, next) => {
 	try {
 		let subReddit = await getSubReddit(req.params.id);
 		if (!subReddit) {
-			res.status(404).end();
+			res.status(StatusCodes.NOT_FOUND).end();
 			return;
 		}
 		res.json(subReddit);
@@ -66,25 +75,29 @@ subRedditRouter.get("/:id", async (req, res, next) => {
 subRedditRouter.get("/", async (req, res, next) => {
 	try {
 		let subReddits = await getAllSubReddits();
-		res.json(subReddits);
+		res.status(StatusCodes.OK).json(subReddits);
 	} catch (err) {
 		next(err);
 	}
 });
 
-subRedditRouter.put("/:id", async (req, res, next) => {
+subRedditRouter.put("/:id", authMiddleware, async (req, res, next) => {
 	try {
-		let subReddit = await updateSubReddit(req.params.id, req.body);
-		res.end();
+		await updateSubReddit(req.params.id, req.body);
+		res.status(StatusCodes.NO_CONTENT).end();
 	} catch (err) {
 		next(err);
 	}
 });
 
-subRedditRouter.delete("/:id", async (req, res, next) => {
+subRedditRouter.delete("/:id", authMiddleware, async (req, res, next) => {
 	try {
-		let subReddit = await deleteSubReddit(req.params.id);
-		res.end();
+		let deleted = await deleteSubReddit(req.params.id, res.locals.userId);
+		if (deleted) {
+			res.status(StatusCodes.NO_CONTENT).end();
+		} else {
+			res.status(StatusCodes.FORBIDDEN).end();
+		}
 	} catch (err) {
 		next(err);
 	}

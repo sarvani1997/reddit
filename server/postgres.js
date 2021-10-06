@@ -70,4 +70,26 @@ User.hasMany(SubReddit, {
   foreignKey: "userId",
 });
 
+const Post = sequelize.define("Post", {
+  text: DataTypes.TEXT,
+});
+
+Post.belongsTo(User, {
+  onDelete: "CASCADE",
+  foreignKey: "userId",
+});
+
+User.hasMany(Post, {
+  foreignKey: "userId",
+});
+
+Post.belongsTo(SubReddit, {
+  onDelete: "CASCADE",
+  foreignKey: "subredditId",
+});
+
+SubReddit.hasMany(Post, {
+  foreignKey: "subredditId",
+});
+
 module.exports = sequelize;

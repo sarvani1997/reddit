@@ -22,7 +22,7 @@ export default function SignUpForm() {
       password,
     });
     const user = await res.data;
-    history.push("/users/log_in");
+    history.push("/log_in");
   };
 
   const onSubmit = (e) => {

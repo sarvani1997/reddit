@@ -2,6 +2,7 @@ const _ = require("lodash");
 const sequelize = require("./postgres");
 const express = require("express");
 const randomstring = require("randomstring");
+const { StatusCodes } = require("http-status-codes");
 
 const userRouter = express.Router();
 const { User, Login } = sequelize.models;
@@ -20,6 +21,7 @@ async function getUser(id) {
 }
 
 async function updateUser(id, data) {
+	data = _.pick(data, userAllowedFields);
 	await User.update(data, {
 		where: {
 			id,
@@ -87,7 +89,7 @@ async function authMiddleware(req, res, next) {
 		if (valid) {
 			next();
 		} else {
-			res.status(401).end();
+			res.status(StatusCodes.UNAUTHORIZED).end();
 		}
 	} catch (err) {
 		next(err);
@@ -97,7 +99,7 @@ async function authMiddleware(req, res, next) {
 userRouter.post("/", async (req, res, next) => {
 	try {
 		let user = await createUser(req.body);
-		res.json(user);
+		res.status(StatusCodes.CREATED).json(user);
 	} catch (err) {
 		next(err);
 	}
@@ -107,10 +109,10 @@ userRouter.get("/:id", async (req, res, next) => {
 	try {
 		let user = await getUser(req.params.id);
 		if (!user) {
-			res.status(404).end();
+			res.status(StatusCodes.NOT_FOUND).end();
 			return;
 		}
-		res.json(user);
+		res.status(StatusCodes.OK).json(user);
 	} catch (err) {
 		next(err);
 	}
@@ -119,7 +121,7 @@ userRouter.get("/:id", async (req, res, next) => {
 userRouter.put("/:id", async (req, res, next) => {
 	try {
 		let user = await updateUser(req.params.id, req.body);
-		res.end();
+		res.status(StatusCodes.NO_CONTENT).end();
 	} catch (err) {
 		next(err);
 	}
@@ -128,7 +130,7 @@ userRouter.put("/:id", async (req, res, next) => {
 userRouter.delete("/:id", async (req, res, next) => {
 	try {
 		let user = await deleteUser(req.params.id);
-		res.end();
+		res.status(StatusCodes.NO_CONTENT).end();
 	} catch (err) {
 		next(err);
 	}
@@ -138,7 +140,7 @@ userRouter.post("/log_in", async (req, res, next) => {
 	try {
 		console.log(req.body);
 		let id = await loginUser(req.body);
-		res.json(id);
+		res.status(StatusCodes.CREATED).json(id);
 	} catch (err) {
 		next(err);
 	}
