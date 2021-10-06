@@ -36,4 +36,17 @@ const User = sequelize.define(
   }
 );
 
+const Login = sequelize.define("Login", {
+  token: DataTypes.STRING,
+});
+
+Login.belongsTo(User, {
+  onDelete: "CASCADE",
+  foreignKey: "userId",
+});
+
+User.hasMany(Login, {
+  foreignKey: "userId",
+});
+
 module.exports = sequelize;

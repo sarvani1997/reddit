@@ -13,3 +13,8 @@ put("localhost:7500/users/1", json={
 get("localhost:7500/users/1")
 
 delete('localhost:7500/users/3')
+
+post('localhost:7500/users/log_in', json={
+'email': "sarvani@gmail.com",
+'password': "sarvani"
+	})

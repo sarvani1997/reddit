@@ -1,9 +1,10 @@
 const _ = require("lodash");
 const sequelize = require("./postgres");
 const express = require("express");
+const randomstring = require("randomstring");
 
 const userRouter = express.Router();
-const { User } = sequelize.models;
+const { User, Login } = sequelize.models;
 
 const userAllowedFields = ["name", "email", "password"];
 
@@ -24,6 +25,31 @@ async function updateUser(id, data) {
 			id,
 		},
 	});
+}
+
+async function loginUser(data) {
+	let user = await User.unscoped().findOne({
+		where: {
+			email: data.email,
+		},
+	});
+	user = user.toJSON();
+	if (user.password === data.password) {
+		let login = await Login.create({
+			token: randomstring.generate(),
+			userId: user.id,
+		});
+		login = login.toJSON();
+
+		let newUser = await getUser(user.id);
+		newUser = {
+			...newUser,
+			token: login.token,
+		};
+		return newUser;
+	} else {
+		throw new Error();
+	}
 }
 
 async function deleteUser(id) {
@@ -69,6 +95,16 @@ userRouter.delete("/:id", async (req, res, next) => {
 	try {
 		let user = await deleteUser(req.params.id);
 		res.end();
+	} catch (err) {
+		next(err);
+	}
+});
+
+userRouter.post("/log_in", async (req, res, next) => {
+	try {
+		console.log(req.body);
+		let id = await loginUser(req.body);
+		res.json(id);
 	} catch (err) {
 		next(err);
 	}
