@@ -10,7 +10,7 @@ import Button from "@mui/material/Button";
 import LoadingButton from "@mui/lab/LoadingButton";
 import LoginIcon from "@mui/icons-material/Login";
 
-export default function LoginPage() {
+export default function LoginPage({ setUser }) {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [loading, setLoading] = useState(false);
@@ -25,8 +25,10 @@ export default function LoginPage() {
 			});
 			if (res.status === 200) {
 				const user = res.data;
+				setUser(user);
+				localStorage.setItem("user", JSON.stringify(user));
 
-				history.push("/");
+				history.push("/dashboard");
 			} else {
 				setError(true);
 			}
