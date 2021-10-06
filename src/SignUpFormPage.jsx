@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import "./App.css";
 import { request } from "./request";
+import { useHistory } from "react-router-dom";
 
 import Container from "@mui/material/Container";
 import Card from "@mui/material/Card";
@@ -13,6 +13,7 @@ export default function SignUpForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const history = useHistory();
 
   const addUser = async () => {
     const res = await request.post(`/users`, {
@@ -21,6 +22,7 @@ export default function SignUpForm() {
       password,
     });
     const user = await res.data;
+    history.push("/users/log_in");
   };
 
   const onSubmit = (e) => {
