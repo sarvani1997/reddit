@@ -40,13 +40,16 @@ put('localhost:7500/subreddit/1', headers = {
 	}
 	)
 
-get('localhost:7500/subreddit', headers = {
+get('localhost:7500/subreddit/5', headers = {
 	'authorization': 'Bearer lEnxC7NSxrXQl8qApRFbAzTvWHPo4FLm'
 	},)
 
 delete('localhost:7500/subreddit/1', headers = {
 	'authorization': 'Bearer lEnxC7NSxrXQl8qApRFbAzTvWHPo4FLm'
 	})
+
+
+get('localhost:7500/posts/1')
 
 
 

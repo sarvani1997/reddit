@@ -6,7 +6,7 @@ const { prettify } = require("sql-log-prettifier");
 const luxon = require("luxon");
 const postgres = require("./postgres");
 const { userRouter } = require("./userRouter");
-const subReddit = require("./subRedditRouter");
+const { subRedditRouter } = require("./subRedditRouter");
 const postRouter = require("./postRouter");
 
 luxon.Settings.defaultZoneName = "Asia/Kolkata";
@@ -20,7 +20,7 @@ app.use(cors());
 app.options("*", cors());
 
 app.use("/users", userRouter);
-app.use("/subreddit", subReddit);
+app.use("/subreddit", subRedditRouter);
 app.use("/posts", postRouter);
 
 app.get("/", (req, res) => {

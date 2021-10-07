@@ -71,6 +71,7 @@ User.hasMany(SubReddit, {
 });
 
 const Post = sequelize.define("Post", {
+  title: DataTypes.STRING,
   text: DataTypes.TEXT,
 });
 

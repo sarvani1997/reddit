@@ -1,1 +1,5 @@
-SELECT * from "Users" ;
+-- SELECT * from "Users" ;
+
+-- DELETE * from ""'
+
+DROP TABLE "Posts"
