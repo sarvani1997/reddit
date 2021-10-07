@@ -46,7 +46,7 @@ const EditPost = ({ post, setShowEdit, onSuccess }) => {
           onChange={(e) => setText(e.target.value)}
         />
         <Button onClick={onClick}>Cancel</Button>
-        <Button type="submit">save</Button>
+        <Button type="submit">Save</Button>
       </form>
     </div>
   );
