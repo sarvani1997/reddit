@@ -1,5 +1,4 @@
-import { useState, useEffect } from "react";
-import { request } from "./request";
+import { useState } from "react";
 import { useHistory } from "react-router-dom";
 
 import Container from "@mui/material/Container";
@@ -7,7 +6,8 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import LoadingButton from "@mui/lab/LoadingButton";
+
+import { request } from "./request";
 
 export default function SignUpForm() {
   const [name, setName] = useState("");
@@ -21,7 +21,7 @@ export default function SignUpForm() {
       email,
       password,
     });
-    const user = await res.data;
+    await res.data;
     history.push("/log_in");
   };
 
