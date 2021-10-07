@@ -8,6 +8,8 @@ import { request } from "./request";
 import SignUpForm from "./SignUpFormPage";
 import UserLogin from "./UserLoginPage";
 import Dashboard from "./DashboardPage";
+import Subreddit from "./SubredditPage";
+import Post from "./PostPage";
 
 async function validateToken(user) {
   const res = await request.get(`/users/${user.id}`);
@@ -57,6 +59,12 @@ const App = () => {
       </Route>
       <Route path="/dashboard">
         <Dashboard />
+      </Route>
+      <Route path="/r/:nick" exact>
+        <Subreddit />
+      </Route>
+      <Route path="/r/:nick/posts/:postId" exact>
+        <Post />
       </Route>
     </Switch>
   );
