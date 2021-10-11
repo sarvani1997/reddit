@@ -121,4 +121,4 @@ postRouter.delete("/:id", authMiddleware, async (req, res, next) => {
     next(err);
   }
 });
-module.exports = postRouter;
+module.exports = { postRouter, getPost };

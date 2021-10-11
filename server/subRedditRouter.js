@@ -18,12 +18,12 @@ async function createSubReddit(data, userId) {
 }
 
 function isNumeric(str) {
-  if (typeof str !== "string") return false;
   return !Number.isNaN(str) && !Number.isNaN(parseFloat(str));
 }
 
 async function getSubReddit(idOrNick) {
   const check = isNumeric(idOrNick);
+  console.log(check, idOrNick);
   let where;
   if (check) {
     where = { id: idOrNick };

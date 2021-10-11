@@ -7,7 +7,8 @@ const luxon = require("luxon");
 const postgres = require("./postgres");
 const { userRouter } = require("./userRouter");
 const { subRedditRouter } = require("./subRedditRouter");
-const postRouter = require("./postRouter");
+const { postRouter } = require("./postRouter");
+const commentRouter = require("./commentRouter");
 
 luxon.Settings.defaultZoneName = "Asia/Kolkata";
 
@@ -22,33 +23,34 @@ app.options("*", cors());
 app.use("/users", userRouter);
 app.use("/subreddit", subRedditRouter);
 app.use("/posts", postRouter);
+app.use("/comments", commentRouter);
 
 app.get("/", (req, res) => {
-	res.json({});
+  res.json({});
 });
 
 app.use(function (err, req, res, next) {
-	console.log(err);
-	res.status(500).json({ msg: "Internal Server Error", error: err });
+  console.log(err);
+  res.status(500).json({ msg: "Internal Server Error", error: err });
 });
 
 const port = process.env.PORT || 7500;
 app.listen(port, () => {
-	console.log(`Listening at localhost:7500`);
+  console.log(`Listening at localhost:7500`);
 });
 
 (async () => {
-	try {
-		await postgres.authenticate();
-		await postgres.sync({
-			// force: true,
-			logging: function (s) {
-				let string = prettify(s);
-				console.log(string);
-			},
-		});
-		console.log("Connection has been established successfully.");
-	} catch (error) {
-		console.error("Unable to connect to the database: ", error);
-	}
+  try {
+    await postgres.authenticate();
+    await postgres.sync({
+      // force: true,
+      logging: function (s) {
+        let string = prettify(s);
+        console.log(string);
+      },
+    });
+    console.log("Connection has been established successfully.");
+  } catch (error) {
+    console.error("Unable to connect to the database: ", error);
+  }
 })();

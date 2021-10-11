@@ -15,6 +15,8 @@ const sequelize = new Sequelize(
   }
 );
 
+// User
+
 const User = sequelize.define(
   "User",
   {
@@ -36,6 +38,8 @@ const User = sequelize.define(
   }
 );
 
+// Login
+
 const Login = sequelize.define("Login", {
   token: DataTypes.STRING,
 });
@@ -48,6 +52,8 @@ Login.belongsTo(User, {
 User.hasMany(Login, {
   foreignKey: "userId",
 });
+
+// Subreddit : name, nick, userId
 
 const SubReddit = sequelize.define("SubReddit", {
   name: {
@@ -70,6 +76,8 @@ User.hasMany(SubReddit, {
   foreignKey: "userId",
 });
 
+// Post: title, text, userId, subredditId
+
 const Post = sequelize.define("Post", {
   title: DataTypes.STRING,
   text: DataTypes.TEXT,
@@ -91,6 +99,39 @@ Post.belongsTo(SubReddit, {
 
 SubReddit.hasMany(Post, {
   foreignKey: "subredditId",
+});
+
+// Comment: text, userId, subredditId, postId
+
+const Comment = sequelize.define("Comment", {
+  text: DataTypes.TEXT,
+});
+
+Comment.belongsTo(User, {
+  onDelete: "CASCADE",
+  foreignKey: "userId",
+});
+
+User.hasMany(Comment, {
+  foreignKey: "userId",
+});
+
+Comment.belongsTo(SubReddit, {
+  onDelete: "CASCADE",
+  foreignKey: "subredditId",
+});
+
+SubReddit.hasMany(Comment, {
+  foreignKey: "subredditId",
+});
+
+Comment.belongsTo(Post, {
+  onDelete: "CASCADE",
+  foreignKey: "postId",
+});
+
+Post.hasMany(Comment, {
+  foreignKey: "postId",
 });
 
 module.exports = sequelize;
