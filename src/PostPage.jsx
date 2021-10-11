@@ -7,6 +7,7 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
+import Comments from "./CommentsSection";
 
 import { request } from "./request";
 
@@ -51,6 +52,7 @@ const EditPost = ({ post, setShowEdit, onSuccess }) => {
     </div>
   );
 };
+
 export default function Page() {
   const { postId, nick } = useParams();
   const [post, setPost] = useState();
@@ -68,6 +70,7 @@ export default function Page() {
   const onClick = () => {
     setShowEdit(true);
   };
+
   if (post === undefined) {
     return null;
   }
@@ -102,6 +105,7 @@ export default function Page() {
                 <Button onClick={onDelete}>Delete Post</Button>
               </div>
             )}
+            <Comments postId={postId} />
           </CardContent>
         </Card>
       </Container>
