@@ -5,9 +5,12 @@ import { useParams, Link } from "react-router-dom";
 import Container from "@mui/material/Container";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
+import CardActions from "@mui/material/CardActions";
+
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
+import Avatar from "@mui/material/Avatar";
 
 import { request } from "./request";
 import { useSafeState } from "./hooks";
@@ -112,7 +115,7 @@ export default function Subreddit() {
               justifyContent="space-between"
               alignItems="center"
             >
-              <h4>Posts</h4>
+              <h2>Posts</h2>
               <Button variant="contained" onClick={onClick}>
                 Create Post
               </Button>
@@ -134,10 +137,24 @@ export default function Subreddit() {
               sx={{ mt: 3, borderRadius: "5px" }}
             >
               <CardContent>
-                <Button component={Link} to={`/r/${nick}/posts/${post.id}`}>
-                  {post.title}
-                </Button>
-                <div>{`Posted by u/${post.user.name}`}</div>
+                <Stack direction="row" alignItems="center">
+                  <Avatar
+                    alt={post.user.name}
+                    src={post.user.avatar}
+                    sx={{ mr: 1.5, mb: 2 }}
+                  />
+                  <>{`Posted by u/${post.user.name}`}</>
+                </Stack>
+                <h3>{post.title}</h3>
+                <CardActions>
+                  <Button
+                    size="small"
+                    component={Link}
+                    to={`/r/${nick}/posts/${post.id}`}
+                  >
+                    View More
+                  </Button>
+                </CardActions>
               </CardContent>
             </Card>
           );

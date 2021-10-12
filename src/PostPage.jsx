@@ -7,6 +7,8 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
+import Avatar from "@mui/material/Avatar";
+import Stack from "@mui/material/Stack";
 import Comments from "./CommentsSection";
 
 import { request } from "./request";
@@ -53,10 +55,11 @@ const EditPost = ({ post, setShowEdit, onSuccess }) => {
   );
 };
 
-export default function Page() {
+export default function Page({ user }) {
   const { postId, nick } = useParams();
   const [post, setPost] = useState();
   const [showEdit, setShowEdit] = useState(false);
+  const [validUser, setValidUser] = useState(true);
   const history = useHistory();
 
   useEffect(() => {
@@ -91,7 +94,15 @@ export default function Page() {
         <Card variant="outlined" sx={{ mt: 10 }}>
           <CardContent>
             <h2>{post.title}</h2>
-            <div>{`Posted by u/${post.user.name}`}</div>
+            <Stack direction="row" alignItems="end">
+              <Avatar
+                alt={post.user.name}
+                src={post.user.avatar}
+                sx={{ width: 24, height: 24, mr: 1.5 }}
+              />
+              <>{`Posted by u/${post.user.name}`}</>
+            </Stack>
+
             {!showEdit && <p>{post.text}</p>}
             {showEdit && (
               <EditPost
