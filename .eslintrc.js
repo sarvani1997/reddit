@@ -23,5 +23,7 @@ module.exports = {
     "operator-linebreak": 0,
     "consistent-return": 0,
     "no-else-return": 0,
+    "import/prefer-default-export": 0,
+    "object-curly-newline": 0,
   },
 };
