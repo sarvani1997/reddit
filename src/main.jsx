@@ -1,6 +1,5 @@
-import React from "react";
 import ReactDOM from "react-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, StrictMode } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import "./index.css";
 import Avatar from "@mui/material/Avatar";
@@ -24,7 +23,7 @@ async function validateToken(user) {
 
 const App = () => {
   const [user, setUser] = useState(() => {
-    let u = localStorage.getItem("user");
+    const u = localStorage.getItem("user");
     if (u) {
       return JSON.parse(u);
     }
@@ -41,7 +40,7 @@ const App = () => {
   useEffect(() => {
     async function validate() {
       if (user) {
-        let validUser = await validateToken(user);
+        const validUser = await validateToken(user);
         if (validUser === false) {
           setUser(undefined);
           localStorage.removeItem("user");
@@ -80,9 +79,9 @@ const App = () => {
 
 ReactDOM.render(
   <Router>
-    <React.StrictMode>
+    <StrictMode>
       <App />
-    </React.StrictMode>
+    </StrictMode>
   </Router>,
   document.getElementById("root")
 );

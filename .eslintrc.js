@@ -22,5 +22,6 @@ module.exports = {
     "no-console": 0,
     "operator-linebreak": 0,
     "consistent-return": 0,
+    "no-else-return": 0,
   },
 };
