@@ -97,7 +97,7 @@ export default function Page({ currentUser }) {
   };
 
   const onDelete = async () => {
-    const res = await request.delete(`/posts/${postId}`);
+    await request.delete(`/posts/${postId}`);
     history.push(`/r/${nick}`);
   };
 

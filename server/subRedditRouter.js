@@ -5,7 +5,7 @@ const sequelize = require("./postgres");
 const { authMiddleware } = require("./userRouter");
 
 const subRedditRouter = express.Router();
-const { subreddit: SubReddit, user: User } = sequelize.models;
+const { subreddit: SubReddit } = sequelize.models;
 
 const subRedditAllowedFields = ["name", "nick"];
 
