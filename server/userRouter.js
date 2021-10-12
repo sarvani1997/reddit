@@ -10,19 +10,19 @@ const { user: User, login: Login } = sequelize.models;
 
 const userAllowedFields = ["name", "email", "password"];
 
-async function createUser(data) {
-  data = _.pick(data, userAllowedFields);
-  let user = await User.create(data);
+async function createUser(_data) {
+  const data = _.pick(_data, userAllowedFields);
+  const user = await User.create(data);
   return user.toJSON();
 }
 
 async function getUser(id) {
-  let user = await User.findByPk(id);
+  const user = await User.findByPk(id);
   return user.toJSON();
 }
 
-async function updateUser(id, data) {
-  data = _.pick(data, userAllowedFields);
+async function updateUser(id, _data) {
+  const data = _.pick(_data, userAllowedFields);
   await User.update(data, {
     where: {
       id,
@@ -65,8 +65,8 @@ async function loginUser(data) {
 
 async function validateToken(authorization, res) {
   if (authorization && authorization.includes("Bearer ")) {
-    let token = authorization.slice(7);
-    let logins = await Login.findAll({
+    const token = authorization.slice(7);
+    const logins = await Login.findAll({
       where: {
         token,
       },
@@ -86,7 +86,7 @@ async function validateToken(authorization, res) {
 
 async function authMiddleware(req, res, next) {
   try {
-    let valid = await validateToken(req.get("authorization"), res);
+    const valid = await validateToken(req.get("authorization"), res);
     if (valid) {
       next();
     } else {
@@ -99,7 +99,7 @@ async function authMiddleware(req, res, next) {
 
 userRouter.post("/", async (req, res, next) => {
   try {
-    let user = await createUser(req.body);
+    const user = await createUser(req.body);
     res.status(StatusCodes.CREATED).json(user);
   } catch (err) {
     next(err);
@@ -108,7 +108,7 @@ userRouter.post("/", async (req, res, next) => {
 
 userRouter.get("/:id", async (req, res, next) => {
   try {
-    let user = await getUser(req.params.id);
+    const user = await getUser(req.params.id);
     if (!user) {
       res.status(StatusCodes.NOT_FOUND).end();
       return;
@@ -121,7 +121,7 @@ userRouter.get("/:id", async (req, res, next) => {
 
 userRouter.put("/:id", async (req, res, next) => {
   try {
-    let user = await updateUser(req.params.id, req.body);
+    await updateUser(req.params.id, req.body);
     res.status(StatusCodes.NO_CONTENT).end();
   } catch (err) {
     next(err);
@@ -130,7 +130,7 @@ userRouter.put("/:id", async (req, res, next) => {
 
 userRouter.delete("/:id", async (req, res, next) => {
   try {
-    let user = await deleteUser(req.params.id);
+    await deleteUser(req.params.id);
     res.status(StatusCodes.NO_CONTENT).end();
   } catch (err) {
     next(err);
@@ -140,7 +140,7 @@ userRouter.delete("/:id", async (req, res, next) => {
 userRouter.post("/log_in", async (req, res, next) => {
   try {
     console.log(req.body);
-    let id = await loginUser(req.body);
+    const id = await loginUser(req.body);
     res.status(StatusCodes.CREATED).json(id);
   } catch (err) {
     next(err);

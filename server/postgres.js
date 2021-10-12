@@ -8,8 +8,8 @@ const sequelize = new Sequelize(
   {
     host: process.env.DB_HOST,
     dialect: "postgres",
-    logging: function (s) {
-      let string = prettify(s);
+    logging: (s) => {
+      const string = prettify(s);
       console.log(string);
     },
   }
