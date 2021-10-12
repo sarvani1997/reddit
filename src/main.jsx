@@ -52,10 +52,12 @@ const App = () => {
 
   return (
     <div>
-      <Stack sx={{ mt: 2, ml: 5 }} direction="row" alignItems="center">
-        <Avatar alt={user.name} src={user.avatar} sx={{ mr: 1.5 }} />
-        <h4>{`u/${user.name}`}</h4>
-      </Stack>
+      {user && (
+        <Stack sx={{ mt: 2, ml: 5 }} direction="row" alignItems="center">
+          <Avatar alt={user.name} src={user.avatar} sx={{ mr: 1.5 }} />
+          <h4>{`u/${user.name}`}</h4>
+        </Stack>
+      )}
       <Switch>
         <Route path="/sign_up">
           <SignUpForm />

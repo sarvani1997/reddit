@@ -133,7 +133,7 @@ export default function Page({ currentUser }) {
             ) : (
               <></>
             )}
-            <Comments postId={postId} />
+            <Comments postId={postId} currentUser={currentUser} />
           </CardContent>
         </Card>
       </Container>
