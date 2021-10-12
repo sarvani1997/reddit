@@ -3,6 +3,8 @@ import ReactDOM from "react-dom";
 import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import "./index.css";
+import Avatar from "@mui/material/Avatar";
+import Stack from "@mui/material/Stack";
 
 import { request } from "./request";
 import SignUpForm from "./SignUpFormPage";
@@ -50,23 +52,29 @@ const App = () => {
   }, []);
 
   return (
-    <Switch>
-      <Route path="/sign_up">
-        <SignUpForm />
-      </Route>
-      <Route path="/log_in">
-        <UserLogin setUser={setUser} />
-      </Route>
-      <Route path="/dashboard">
-        <Dashboard />
-      </Route>
-      <Route path="/r/:nick" exact>
-        <Subreddit user={user} />
-      </Route>
-      <Route path="/r/:nick/posts/:postId" exact>
-        <Post user={user} />
-      </Route>
-    </Switch>
+    <div>
+      <Stack sx={{ mt: 2, ml: 5 }} direction="row" alignItems="center">
+        <Avatar alt={user.name} src={user.avatar} sx={{ mr: 1.5 }} />
+        <h4>{`u/${user.name}`}</h4>
+      </Stack>
+      <Switch>
+        <Route path="/sign_up">
+          <SignUpForm />
+        </Route>
+        <Route path="/log_in">
+          <UserLogin setUser={setUser} />
+        </Route>
+        <Route path="/dashboard">
+          <Dashboard />
+        </Route>
+        <Route path="/r/:nick" exact>
+          <Subreddit currentUser={user} />
+        </Route>
+        <Route path="/r/:nick/posts/:postId" exact>
+          <Post currentUser={user} />
+        </Route>
+      </Switch>
+    </div>
   );
 };
 

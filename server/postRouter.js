@@ -19,7 +19,12 @@ async function createPost(data, userId) {
 }
 
 async function getPost(id) {
-  const post = await Post.findOne({ include: "user" });
+  const post = await Post.findOne({
+    where: {
+      id,
+    },
+    include: ["user", "subreddit"],
+  });
   return post.toJSON();
 }
 
@@ -29,7 +34,7 @@ async function getAllPosts(query) {
     where: {
       subredditId: subreddit.id,
     },
-    include: "user",
+    include: ["user", "subreddit"],
   });
   posts = posts.map((post) => post.toJSON());
   return posts;

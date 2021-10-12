@@ -55,11 +55,11 @@ const EditPost = ({ post, setShowEdit, onSuccess }) => {
   );
 };
 
-export default function Page({ user }) {
+export default function Page({ currentUser }) {
   const { postId, nick } = useParams();
   const [post, setPost] = useState();
   const [showEdit, setShowEdit] = useState(false);
-  const [validUser, setValidUser] = useState(true);
+  const [validUser, setValidUser] = useState(false);
   const history = useHistory();
 
   useEffect(() => {
@@ -73,6 +73,19 @@ export default function Page({ user }) {
   const onClick = () => {
     setShowEdit(true);
   };
+
+  useEffect(() => {
+    if (post === undefined) {
+      return null;
+    }
+
+    if (
+      post.userId === currentUser.id ||
+      post.subreddit.userId === currentUser.id
+    ) {
+      setValidUser(true);
+    }
+  }, [post]);
 
   if (post === undefined) {
     return null;
@@ -103,19 +116,22 @@ export default function Page({ user }) {
               <>{`Posted by u/${post.user.name}`}</>
             </Stack>
 
-            {!showEdit && <p>{post.text}</p>}
-            {showEdit && (
+            {!showEdit ? (
+              <p>{post.text}</p>
+            ) : (
               <EditPost
                 post={post}
                 setShowEdit={setShowEdit}
                 onSuccess={onSuccess}
               />
             )}
-            {!showEdit && (
+            {!showEdit && validUser ? (
               <div>
                 <Button onClick={onClick}>Edit</Button>
                 <Button onClick={onDelete}>Delete Post</Button>
               </div>
+            ) : (
+              <></>
             )}
             <Comments postId={postId} />
           </CardContent>
