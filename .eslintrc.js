@@ -20,5 +20,7 @@ module.exports = {
     "arrow-body-style": 0,
     "comma-dangle": 0,
     "no-console": 0,
+    "operator-linebreak": 0,
+    "consistent-return": 0,
   },
 };
