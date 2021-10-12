@@ -32,6 +32,7 @@ async function getAllComments(query) {
     where: {
       postId: query.postId,
     },
+    include: "user",
   });
   comments = comments.map((comment) => comment.toJSON());
   return comments;

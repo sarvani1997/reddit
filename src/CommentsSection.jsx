@@ -5,6 +5,8 @@ import { useParams, useHistory } from "react-router-dom";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
+import Avatar from "@mui/material/Avatar";
+import Stack from "@mui/material/Stack";
 
 import { request } from "./request";
 
@@ -65,6 +67,14 @@ const Comment = ({ comment, onSuccess }) => {
 
   return !showEdit ? (
     <Box sx={{ p: 1.5 }}>
+      <Stack direction="row" alignItems="end" sx={{ mb: 1 }}>
+        <Avatar
+          alt={comment.user.name}
+          src={comment.user.avatar}
+          sx={{ width: 24, height: 24, mr: 1.5 }}
+        />
+        <>{`u/${comment.user.name}`}</>
+      </Stack>
       <div>{comment.text}</div>
       <Button size="small" onClick={onEdit}>
         Edit

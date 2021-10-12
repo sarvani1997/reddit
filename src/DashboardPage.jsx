@@ -13,6 +13,7 @@ import Divider from "@mui/material/Divider";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
+import Avatar from "@mui/material/Avatar";
 
 import { request } from "./request";
 
@@ -121,9 +122,14 @@ export default function Subreddit() {
                       component={Link}
                       to={`/r/${subreddit.nick}`}
                     >
+                      <Avatar
+                        alt={subreddit.user.name}
+                        src={subreddit.user.avatar}
+                        sx={{ mr: 1.5 }}
+                      />
                       <ListItemText
                         primary={subreddit.name}
-                        secondary={`nickname: ${subreddit.nick} created by u/${subreddit.user.name}`}
+                        secondary={`created by u/${subreddit.user.name},  r/${subreddit.nick}`}
                       />
                     </ListItemButton>
                   </ListItem>

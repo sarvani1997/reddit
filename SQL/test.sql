@@ -1,2 +1,2 @@
-SELECT * from "SubReddits" ;
+SELECT * from "users" ;
 
