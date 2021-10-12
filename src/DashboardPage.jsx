@@ -123,7 +123,7 @@ export default function Subreddit() {
                     >
                       <ListItemText
                         primary={subreddit.name}
-                        secondary={`nickname: ${subreddit.nick}`}
+                        secondary={`nickname: ${subreddit.nick} created by u/${subreddit.user.name}`}
                       />
                     </ListItemButton>
                   </ListItem>

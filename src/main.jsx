@@ -61,10 +61,10 @@ const App = () => {
         <Dashboard />
       </Route>
       <Route path="/r/:nick" exact>
-        <Subreddit />
+        <Subreddit user={user} />
       </Route>
       <Route path="/r/:nick/posts/:postId" exact>
-        <Post />
+        <Post user={user} />
       </Route>
     </Switch>
   );

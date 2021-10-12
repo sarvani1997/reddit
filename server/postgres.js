@@ -18,7 +18,7 @@ const sequelize = new Sequelize(
 // User
 
 const User = sequelize.define(
-  "User",
+  "user",
   {
     name: DataTypes.STRING,
     email: {
@@ -30,6 +30,7 @@ const User = sequelize.define(
       },
     },
     password: DataTypes.STRING,
+    avatar: DataTypes.STRING,
   },
   {
     defaultScope: {
@@ -40,22 +41,17 @@ const User = sequelize.define(
 
 // Login
 
-const Login = sequelize.define("Login", {
+const Login = sequelize.define("login", {
   token: DataTypes.STRING,
 });
 
 Login.belongsTo(User, {
   onDelete: "CASCADE",
-  foreignKey: "userId",
-});
-
-User.hasMany(Login, {
-  foreignKey: "userId",
 });
 
 // Subreddit : name, nick, userId
 
-const SubReddit = sequelize.define("SubReddit", {
+const SubReddit = sequelize.define("subreddit", {
   name: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -69,69 +65,39 @@ const SubReddit = sequelize.define("SubReddit", {
 
 SubReddit.belongsTo(User, {
   onDelete: "CASCADE",
-  foreignKey: "userId",
-});
-
-User.hasMany(SubReddit, {
-  foreignKey: "userId",
 });
 
 // Post: title, text, userId, subredditId
 
-const Post = sequelize.define("Post", {
+const Post = sequelize.define("post", {
   title: DataTypes.STRING,
   text: DataTypes.TEXT,
 });
 
 Post.belongsTo(User, {
   onDelete: "CASCADE",
-  foreignKey: "userId",
-});
-
-User.hasMany(Post, {
-  foreignKey: "userId",
 });
 
 Post.belongsTo(SubReddit, {
   onDelete: "CASCADE",
-  foreignKey: "subredditId",
-});
-
-SubReddit.hasMany(Post, {
-  foreignKey: "subredditId",
 });
 
 // Comment: text, userId, subredditId, postId
 
-const Comment = sequelize.define("Comment", {
+const Comment = sequelize.define("comment", {
   text: DataTypes.TEXT,
 });
 
 Comment.belongsTo(User, {
   onDelete: "CASCADE",
-  foreignKey: "userId",
-});
-
-User.hasMany(Comment, {
-  foreignKey: "userId",
 });
 
 Comment.belongsTo(SubReddit, {
   onDelete: "CASCADE",
-  foreignKey: "subredditId",
-});
-
-SubReddit.hasMany(Comment, {
-  foreignKey: "subredditId",
 });
 
 Comment.belongsTo(Post, {
   onDelete: "CASCADE",
-  foreignKey: "postId",
-});
-
-Post.hasMany(Comment, {
-  foreignKey: "postId",
 });
 
 module.exports = sequelize;

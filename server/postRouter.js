@@ -1,12 +1,13 @@
 const _ = require("lodash");
-const sequelize = require("./postgres");
 const express = require("express");
+const { StatusCodes } = require("http-status-codes");
+
+const sequelize = require("./postgres");
+const { getSubReddit } = require("./subRedditRouter");
+const { authMiddleware } = require("./userRouter");
 
 const postRouter = express.Router();
-const { Post, SubReddit } = sequelize.models;
-const { authMiddleware } = require("./userRouter");
-const { StatusCodes } = require("http-status-codes");
-const { getSubReddit } = require("./subRedditRouter");
+const { post: Post, subreddit: SubReddit } = sequelize.models;
 
 const postAllowedFields = ["title", "text", "subredditId"];
 
@@ -18,7 +19,7 @@ async function createPost(data, userId) {
 }
 
 async function getPost(id) {
-  const post = await Post.findByPk(id);
+  const post = await Post.findOne({ include: "user" });
   return post.toJSON();
 }
 
@@ -28,6 +29,7 @@ async function getAllPosts(query) {
     where: {
       subredditId: subreddit.id,
     },
+    include: "user",
   });
   posts = posts.map((post) => post.toJSON());
   return posts;

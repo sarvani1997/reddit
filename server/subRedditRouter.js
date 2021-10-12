@@ -1,19 +1,18 @@
 const _ = require("lodash");
-const sequelize = require("./postgres");
 const express = require("express");
+const { StatusCodes } = require("http-status-codes");
+const sequelize = require("./postgres");
+const { authMiddleware } = require("./userRouter");
 
 const subRedditRouter = express.Router();
-const { SubReddit } = sequelize.models;
-const { authMiddleware } = require("./userRouter");
-const { StatusCodes } = require("http-status-codes");
-const { Op } = require("sequelize");
+const { subreddit: SubReddit, user: User } = sequelize.models;
 
 const subRedditAllowedFields = ["name", "nick"];
 
-async function createSubReddit(data, userId) {
-  data = _.pick(data, subRedditAllowedFields);
+async function createSubReddit(_data, userId) {
+  let data = _.pick(_data, subRedditAllowedFields);
   data = { ...data, userId };
-  let subReddit = await SubReddit.create(data);
+  const subReddit = await SubReddit.create(data);
   return subReddit.toJSON();
 }
 
@@ -37,13 +36,15 @@ async function getSubReddit(idOrNick) {
 }
 
 async function getAllSubReddits() {
-  let subReddits = await SubReddit.findAll();
+  let subReddits = await SubReddit.findAll({
+    include: "user",
+  });
   subReddits = subReddits.map((subReddit) => subReddit.toJSON());
   return subReddits;
 }
 
-async function updateSubReddit(id, data) {
-  data = _.pick(data, subRedditAllowedFields);
+async function updateSubReddit(id, _data) {
+  const data = _.pick(_data, subRedditAllowedFields);
   await SubReddit.update(data, {
     where: {
       id,
@@ -60,14 +61,14 @@ async function deleteSubReddit(id, userId) {
       },
     });
     return true;
-  } else {
-    return false;
   }
+
+  return false;
 }
 
 subRedditRouter.post("/", authMiddleware, async (req, res, next) => {
   try {
-    let subReddit = await createSubReddit(req.body, res.locals.userId);
+    const subReddit = await createSubReddit(req.body, res.locals.userId);
     res.status(StatusCodes.CREATED).json(subReddit);
   } catch (err) {
     next(err);
@@ -76,7 +77,7 @@ subRedditRouter.post("/", authMiddleware, async (req, res, next) => {
 
 subRedditRouter.get("/:id", async (req, res, next) => {
   try {
-    let subReddit = await getSubReddit(req.params.id);
+    const subReddit = await getSubReddit(req.params.id);
     if (!subReddit) {
       res.status(StatusCodes.NOT_FOUND).end();
       return;
@@ -89,7 +90,7 @@ subRedditRouter.get("/:id", async (req, res, next) => {
 
 subRedditRouter.get("/", async (req, res, next) => {
   try {
-    let subReddits = await getAllSubReddits();
+    const subReddits = await getAllSubReddits();
     res.status(StatusCodes.OK).json(subReddits);
   } catch (err) {
     next(err);
@@ -107,7 +108,7 @@ subRedditRouter.put("/:id", authMiddleware, async (req, res, next) => {
 
 subRedditRouter.delete("/:id", authMiddleware, async (req, res, next) => {
   try {
-    let deleted = await deleteSubReddit(req.params.id, res.locals.userId);
+    const deleted = await deleteSubReddit(req.params.id, res.locals.userId);
     if (deleted) {
       res.status(StatusCodes.NO_CONTENT).end();
     } else {

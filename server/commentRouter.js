@@ -8,7 +8,7 @@ const { getSubReddit } = require("./subRedditRouter");
 const { getPost } = require("./postRouter");
 
 const commentRouter = express.Router();
-const { Comment } = sequelize.models;
+const { comment: Comment } = sequelize.models;
 
 const commentAllowedFields = ["text", "postId"];
 

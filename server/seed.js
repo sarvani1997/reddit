@@ -12,7 +12,12 @@ async function seed() {
     },
   });
 
-  const { User, SubReddit, Post, Comment } = postgres.models;
+  const {
+    user: User,
+    subreddit: SubReddit,
+    post: Post,
+    comment: Comment,
+  } = postgres.models;
 
   // => users table
   //  => subreddits
@@ -25,6 +30,7 @@ async function seed() {
     name: faker.name.firstName(),
     email: faker.internet.email(),
     password: faker.internet.password(),
+    avatar: faker.internet.avatar(),
   }));
   await User.bulkCreate(users);
 

@@ -1,5 +1,2 @@
-SELECT * from "Users" ;
+SELECT * from "SubReddits" ;
 
--- DELETE * from ""'
-
--- DROP TABLE "Comments"

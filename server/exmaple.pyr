@@ -40,7 +40,7 @@ put('localhost:7500/subreddit/1', headers = {
 	}
 	)
 
-get('localhost:7500/subreddit/5', headers = {
+get('localhost:7500/posts?nick=quasi', headers = {
 	'authorization': 'Bearer lEnxC7NSxrXQl8qApRFbAzTvWHPo4FLm'
 	},)
 

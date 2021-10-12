@@ -91,6 +91,7 @@ export default function Page() {
         <Card variant="outlined" sx={{ mt: 10 }}>
           <CardContent>
             <h2>{post.title}</h2>
+            <div>{`Posted by u/${post.user.name}`}</div>
             {!showEdit && <p>{post.text}</p>}
             {showEdit && (
               <EditPost
