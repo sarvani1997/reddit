@@ -11,10 +11,10 @@ const { post: Post, subreddit: SubReddit } = sequelize.models;
 
 const postAllowedFields = ["title", "text", "subredditId"];
 
-async function createPost(data, userId) {
-  data = _.pick(data, postAllowedFields);
+async function createPost(_data, userId) {
+  let data = _.pick(_data, postAllowedFields);
   data = { ...data, userId };
-  let post = await Post.create(data);
+  const post = await Post.create(data);
   return post.toJSON();
 }
 
@@ -40,11 +40,11 @@ async function getAllPosts(query) {
   return posts;
 }
 
-async function updatePost(id, data, userId) {
-  data = _.pick(data, ["text"]);
+async function updatePost(id, _data, userId) {
+  const data = _.pick(_data, ["text"]);
 
-  let post = await getPost(id);
-  let subreddit = await SubReddit.findByPk(post.subredditId);
+  const post = await getPost(id);
+  const subreddit = await SubReddit.findByPk(post.subredditId);
   if (post.userId === userId || subreddit.userId === userId) {
     await Post.update(data, {
       where: {
@@ -58,8 +58,8 @@ async function updatePost(id, data, userId) {
 }
 
 async function deletePost(id, userId) {
-  let post = await getPost(id);
-  let subreddit = await SubReddit.findByPk(post.subredditId);
+  const post = await getPost(id);
+  const subreddit = await SubReddit.findByPk(post.subredditId);
   if (post.userId === userId || subreddit.userId === userId) {
     await Post.destroy({
       where: {
@@ -74,7 +74,7 @@ async function deletePost(id, userId) {
 
 postRouter.post("/", authMiddleware, async (req, res, next) => {
   try {
-    let post = await createPost(req.body, res.locals.userId);
+    const post = await createPost(req.body, res.locals.userId);
     res.status(StatusCodes.CREATED).json(post);
   } catch (err) {
     next(err);
@@ -83,7 +83,7 @@ postRouter.post("/", authMiddleware, async (req, res, next) => {
 
 postRouter.get("/:id", async (req, res, next) => {
   try {
-    let post = await getPost(req.params.id);
+    const post = await getPost(req.params.id);
     if (!post) {
       res.status(StatusCodes.NOT_FOUND).end();
       return;
@@ -96,7 +96,7 @@ postRouter.get("/:id", async (req, res, next) => {
 
 postRouter.get("/", async (req, res, next) => {
   try {
-    let posts = await getAllPosts(req.query);
+    const posts = await getAllPosts(req.query);
     res.status(StatusCodes.OK).json(posts);
   } catch (err) {
     next(err);
@@ -105,7 +105,7 @@ postRouter.get("/", async (req, res, next) => {
 
 postRouter.put("/:id", authMiddleware, async (req, res, next) => {
   try {
-    let update = await updatePost(req.params.id, req.body, res.locals.userId);
+    const update = await updatePost(req.params.id, req.body, res.locals.userId);
     if (update) {
       res.status(StatusCodes.NO_CONTENT).end();
     } else {
@@ -118,7 +118,7 @@ postRouter.put("/:id", authMiddleware, async (req, res, next) => {
 
 postRouter.delete("/:id", authMiddleware, async (req, res, next) => {
   try {
-    let deleted = await deletePost(req.params.id, res.locals.userId);
+    const deleted = await deletePost(req.params.id, res.locals.userId);
     if (deleted) {
       res.status(StatusCodes.NO_CONTENT).end();
     } else {

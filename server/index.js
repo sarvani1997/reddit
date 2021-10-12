@@ -29,7 +29,7 @@ app.get("/", (req, res) => {
   res.json({});
 });
 
-app.use(function (err, req, res, next) {
+app.use((err, req, res) => {
   console.log(err);
   res.status(500).json({ msg: "Internal Server Error", error: err });
 });
@@ -44,8 +44,8 @@ app.listen(port, () => {
     await postgres.authenticate();
     await postgres.sync({
       // force: true,
-      logging: function (s) {
-        let string = prettify(s);
+      logging: (s) => {
+        const string = prettify(s);
         console.log(string);
       },
     });
