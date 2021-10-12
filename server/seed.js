@@ -71,15 +71,16 @@ async function seed() {
       min: 1,
       max: 10,
     }),
-    subredditId: faker.datatype.number({
-      min: 1,
-      max: 10,
-    }),
     postId: faker.datatype.number({
       min: 1,
       max: 100,
     }),
   }));
+
+  for (const comment of comments) {
+    comment.subredditId = posts[comment.postId - 1].subredditId;
+  }
+
   await Comment.bulkCreate(comments);
 }
 

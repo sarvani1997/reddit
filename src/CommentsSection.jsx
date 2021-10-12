@@ -51,8 +51,18 @@ const EditComment = ({ comment, setShowEdit, onSuccess }) => {
   );
 };
 
-const Comment = ({ comment, onSuccess }) => {
+const Comment = ({ comment, onSuccess, currentUser }) => {
   const [showEdit, setShowEdit] = useState(false);
+  const [validUser, setValidUser] = useState(false);
+
+  useEffect(() => {
+    if (
+      comment.userId === currentUser.id ||
+      comment.subreddit.userId === currentUser.id
+    ) {
+      setValidUser(true);
+    }
+  }, [comment]);
 
   const onEdit = () => {
     setShowEdit(true);
@@ -63,30 +73,42 @@ const Comment = ({ comment, onSuccess }) => {
     onSuccess();
   };
 
-  return !showEdit ? (
-    <Box sx={{ p: 1.5 }}>
-      <Stack direction="row" alignItems="end" sx={{ mb: 1 }}>
-        <Avatar
-          alt={comment.user.name}
-          src={comment.user.avatar}
-          sx={{ width: 24, height: 24, mr: 1.5 }}
+  console.log(comment.subreddit.userId, currentUser.id);
+
+  return (
+    <div>
+      {!showEdit ? (
+        <Box sx={{ p: 1.5 }}>
+          <Stack direction="row" alignItems="end" sx={{ mb: 1 }}>
+            <Avatar
+              alt={comment.user.name}
+              src={comment.user.avatar}
+              sx={{ width: 24, height: 24, mr: 1.5 }}
+            />
+            <>{`u/${comment.user.name}`}</>
+          </Stack>
+          <div>{comment.text}</div>
+        </Box>
+      ) : (
+        <EditComment
+          comment={comment}
+          setShowEdit={setShowEdit}
+          onSuccess={onSuccess}
         />
-        <>{`u/${comment.user.name}`}</>
-      </Stack>
-      <div>{comment.text}</div>
-      <Button size="small" onClick={onEdit}>
-        Edit
-      </Button>
-      <Button size="small" onClick={() => onDelete(comment.id)}>
-        Delete
-      </Button>
-    </Box>
-  ) : (
-    <EditComment
-      comment={comment}
-      setShowEdit={setShowEdit}
-      onSuccess={onSuccess}
-    />
+      )}
+      {!showEdit && validUser ? (
+        <div>
+          <Button size="small" onClick={onEdit}>
+            Edit
+          </Button>
+          <Button size="small" onClick={() => onDelete(comment.id)}>
+            Delete
+          </Button>
+        </div>
+      ) : (
+        <></>
+      )}
+    </div>
   );
 };
 
@@ -128,7 +150,7 @@ const AddComment = ({ postId, onSuccess }) => {
   );
 };
 
-export default function Comments({ postId }) {
+export default function Comments({ postId, currentUser }) {
   const [comments, setComments] = useState([]);
 
   useEffect(() => {
@@ -149,7 +171,12 @@ export default function Comments({ postId }) {
       <AddComment postId={postId} onSuccess={onSuccess} />
       {comments.map((comment) => {
         return (
-          <Comment key={comment.id} comment={comment} onSuccess={onSuccess} />
+          <Comment
+            key={comment.id}
+            comment={comment}
+            onSuccess={onSuccess}
+            currentUser={currentUser}
+          />
         );
       })}
     </div>
