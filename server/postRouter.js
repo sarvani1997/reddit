@@ -29,6 +29,7 @@ async function getPost(id) {
 }
 
 async function getAllPosts(query) {
+  const page = query.page || 1;
   const where = {};
 
   if (query.nick) {
@@ -42,6 +43,8 @@ async function getAllPosts(query) {
   let posts = await Post.findAll({
     where,
     include: ["user", "subreddit"],
+    limit: 20,
+    offset: (page - 1) * 20,
   });
   posts = posts.map((post) => post.toJSON());
   return posts;
@@ -96,15 +99,6 @@ postRouter.get("/:id", async (req, res, next) => {
       return;
     }
     res.json(post);
-  } catch (err) {
-    next(err);
-  }
-});
-
-postRouter.get("/user_posts", authMiddleware, async (req, res, next) => {
-  try {
-    const posts = await getUserPosts(req.locals.userId);
-    res.status(StatusCodes.OK).json(posts);
   } catch (err) {
     next(err);
   }

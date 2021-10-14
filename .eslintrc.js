@@ -26,5 +26,7 @@ module.exports = {
     "import/prefer-default-export": 0,
     "object-curly-newline": 0,
     "no-restricted-syntax": 0,
+    "no-shadow": 0,
+    "react/jsx-wrap-multilines": 0,
   },
 };
