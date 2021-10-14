@@ -1,9 +1,10 @@
 import ReactDOM from "react-dom";
 import { useState, useEffect, StrictMode } from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
 import "./index.css";
 import Avatar from "@mui/material/Avatar";
 import Stack from "@mui/material/Stack";
+import Button from "@mui/material/Button";
 
 import { request } from "./request";
 import SignUpForm from "./SignUpFormPage";
@@ -11,6 +12,7 @@ import UserLogin from "./UserLoginPage";
 import Dashboard from "./DashboardPage";
 import Subreddit from "./SubredditPage";
 import Post from "./PostPage";
+import { Comment, UserProfile } from "./UserProfilePage";
 
 async function validateToken(user) {
   const res = await request.get(`/users/${user.id}`);
@@ -53,10 +55,16 @@ const App = () => {
   return (
     <div>
       {user && (
-        <Stack sx={{ mt: 2, ml: 5 }} direction="row" alignItems="center">
-          <Avatar alt={user.name} src={user.avatar} sx={{ mr: 1.5 }} />
-          <h4>{`u/${user.name}`}</h4>
-        </Stack>
+        <Button
+          // size="small"
+          component={Link}
+          to={`/u/${user.id}`}
+        >
+          <Stack sx={{ mt: 2, ml: 5 }} direction="row" alignItems="center">
+            <Avatar alt={user.name} src={user.avatar} sx={{ mr: 1.5 }} />
+            <h4>{`u/${user.name}`}</h4>
+          </Stack>
+        </Button>
       )}
       <Switch>
         <Route path="/sign_up">
@@ -73,6 +81,12 @@ const App = () => {
         </Route>
         <Route path="/r/:nick/posts/:postId" exact>
           <Post currentUser={user} />
+        </Route>
+        <Route path="/u/:userId" exact>
+          <UserProfile />
+        </Route>
+        <Route path="/r/:nick/comments/:commentId" exact>
+          <Comment />
         </Route>
       </Switch>
     </div>
