@@ -32,6 +32,7 @@
     "randomstring": "^1.2.1",
     "react": "^17.0.0",
     "react-dom": "^17.0.0",
+    "react-infinite-scroll-component": "^6.1.0",
     "react-router-dom": "^5.2.0",
     "sequelize": "^6.6.5",
     "sql-log-prettifier": "^0.1.2",

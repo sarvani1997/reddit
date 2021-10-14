@@ -12,7 +12,8 @@ import UserLogin from "./UserLoginPage";
 import Dashboard from "./DashboardPage";
 import Subreddit from "./SubredditPage";
 import Post from "./PostPage";
-import { Comment, UserProfile } from "./UserProfilePage";
+import { UserProfile } from "./UserProfilePage";
+import { Comment } from "./CommentPage";
 
 async function validateToken(user) {
   const res = await request.get(`/users/${user.id}`);

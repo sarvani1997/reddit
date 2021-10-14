@@ -33,11 +33,11 @@ async function getComment(id) {
 }
 
 async function getAllComments(query) {
+  const page = query.page || 1;
   const where = {};
 
   if (query.postId) {
-    const post = await getPost(query.postId);
-    where.postId = post.id;
+    where.postId = query.postId;
   }
   if (query.userId) {
     where.userId = query.userId;
@@ -46,6 +46,8 @@ async function getAllComments(query) {
   let comments = await Comment.findAll({
     where,
     include: ["user", "subreddit", "post"],
+    limit: 20,
+    offset: (page - 1) * 20,
   });
   comments = comments.map((comment) => comment.toJSON());
   return comments;
