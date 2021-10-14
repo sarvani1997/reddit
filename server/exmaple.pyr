@@ -63,5 +63,9 @@ put('localhost:7500/comments/1', headers = {
 	'text': 'venkata',
 	})
 
+get('localhost:7500/posts?userId=1', headers = {
+	'authorization': 'Bearer fMOQ71tHgcNaeTo5JHDsFJxgsvzJTpEz'
+	})
+
 
 

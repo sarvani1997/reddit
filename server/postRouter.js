@@ -29,11 +29,18 @@ async function getPost(id) {
 }
 
 async function getAllPosts(query) {
-  const subreddit = await getSubReddit(query.nick);
+  const where = {};
+
+  if (query.nick) {
+    const subreddit = await getSubReddit(query.nick);
+    where.subredditId = subreddit.id;
+  }
+  if (query.userId) {
+    where.userId = query.userId;
+  }
+
   let posts = await Post.findAll({
-    where: {
-      subredditId: subreddit.id,
-    },
+    where,
     include: ["user", "subreddit"],
   });
   posts = posts.map((post) => post.toJSON());
@@ -89,6 +96,15 @@ postRouter.get("/:id", async (req, res, next) => {
       return;
     }
     res.json(post);
+  } catch (err) {
+    next(err);
+  }
+});
+
+postRouter.get("/user_posts", authMiddleware, async (req, res, next) => {
+  try {
+    const posts = await getUserPosts(req.locals.userId);
+    res.status(StatusCodes.OK).json(posts);
   } catch (err) {
     next(err);
   }

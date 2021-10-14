@@ -23,16 +23,29 @@ async function createComment(_data, userId) {
 }
 
 async function getComment(id) {
-  const comment = await Comment.findByPk(id);
+  const comment = await Comment.findOne({
+    where: {
+      id,
+    },
+    include: ["user", "subreddit", "post"],
+  });
   return comment.toJSON();
 }
 
 async function getAllComments(query) {
+  const where = {};
+
+  if (query.postId) {
+    const post = await getPost(query.postId);
+    where.postId = post.id;
+  }
+  if (query.userId) {
+    where.userId = query.userId;
+  }
+
   let comments = await Comment.findAll({
-    where: {
-      postId: query.postId,
-    },
-    include: ["user", "subreddit"],
+    where,
+    include: ["user", "subreddit", "post"],
   });
   comments = comments.map((comment) => comment.toJSON());
   return comments;
