@@ -1,5 +1,5 @@
 // import { useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import Container from "@mui/material/Container";
 import Card from "@mui/material/Card";
@@ -12,7 +12,7 @@ export default function Settings() {
       <Container maxWidth="sm">
         <Card variant="outlined" sx={{ mt: 10 }}>
           <CardContent>
-            <Button component={Link} to={`/settings/changePassword`}>
+            <Button component={Link} to="/settings/changePassword">
               Change Password
             </Button>
           </CardContent>
