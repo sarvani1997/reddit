@@ -40,7 +40,7 @@ put('localhost:7500/subreddit/1', headers = {
 	}
 	)
 
-get('localhost:7500/posts?nick=quasi', headers = {
+get('localhost:7500/posts', headers = {
 	'authorization': 'Bearer lEnxC7NSxrXQl8qApRFbAzTvWHPo4FLm'
 	},)
 
@@ -68,6 +68,10 @@ put('localhost:7500/users/changePassword', headers = {
 	}, json = {
 	"oldPassword": "sarvani",
 	"newPassword": "saru"
+	})
+
+put('localhost:7500/posts/1/upvote', headers = {
+	'authorization': 'Bearer wQLWf4XkVM7guu3xT8rPx2FPue50sCUs'
 	})
 
 

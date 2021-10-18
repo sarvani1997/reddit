@@ -7,7 +7,7 @@ const { getSubReddit } = require("./subRedditRouter");
 const { authMiddleware } = require("./userRouter");
 
 const postRouter = express.Router();
-const { post: Post, subreddit: SubReddit } = sequelize.models;
+const { post: Post, subreddit: SubReddit, upvote: Upvote } = sequelize.models;
 
 const postAllowedFields = ["title", "text", "subredditId"];
 
@@ -26,6 +26,68 @@ async function getPost(id) {
     include: ["user", "subreddit"],
   });
   return post.toJSON();
+}
+
+async function handleUpvote(postId, userId) {
+  return sequelize.transaction(async (t) => {
+    console.log(postId, userId);
+    const post = await getPost(postId);
+    const existingUpvotes = await Upvote.findAll(
+      {
+        where: {
+          userId,
+          postId,
+        },
+      },
+      {
+        transaction: t,
+      }
+    );
+    let { upvotes } = post;
+    if (existingUpvotes.length === 0) {
+      upvotes = (upvotes || 0) + 1;
+      await Post.update(
+        { upvotes },
+        {
+          where: {
+            id: postId,
+          },
+        },
+        {
+          transaction: t,
+        }
+      );
+      await Upvote.create(
+        { postId, userId },
+        {
+          transaction: t,
+        }
+      );
+    } else if (existingUpvotes.length > 0) {
+      await Upvote.destroy(
+        {
+          where: {
+            postId,
+            userId,
+          },
+        },
+        {
+          transaction: t,
+        }
+      );
+      await Post.update(
+        { upvotes: upvotes - 1 },
+        {
+          where: {
+            id: postId,
+          },
+        },
+        {
+          transaction: t,
+        }
+      );
+    }
+  });
 }
 
 async function getAllPosts(query) {
@@ -86,6 +148,15 @@ postRouter.post("/", authMiddleware, async (req, res, next) => {
   try {
     const post = await createPost(req.body, res.locals.userId);
     res.status(StatusCodes.CREATED).json(post);
+  } catch (err) {
+    next(err);
+  }
+});
+
+postRouter.put("/:id/upvote", authMiddleware, async (req, res, next) => {
+  try {
+    const upvote = await handleUpvote(req.params.id, res.locals.userId);
+    res.status(StatusCodes.NO_CONTENT).json(upvote);
   } catch (err) {
     next(err);
   }

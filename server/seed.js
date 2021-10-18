@@ -59,6 +59,7 @@ async function seed() {
       min: 1,
       max: 10,
     }),
+    upvotes: 0,
   }));
 
   await Post.bulkCreate(posts);

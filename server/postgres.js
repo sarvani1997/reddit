@@ -72,6 +72,7 @@ SubReddit.belongsTo(User, {
 const Post = sequelize.define("post", {
   title: DataTypes.STRING,
   text: DataTypes.TEXT,
+  upvotes: DataTypes.INTEGER,
 });
 
 Post.belongsTo(User, {
@@ -98,6 +99,20 @@ Comment.belongsTo(SubReddit, {
 
 Comment.belongsTo(Post, {
   onDelete: "CASCADE",
+});
+
+// Upvote: postId, userId, count
+
+const Upvote = sequelize.define("upvote", {
+  vote: DataTypes.BOOLEAN,
+});
+
+Post.belongsToMany(User, {
+  through: Upvote,
+});
+
+User.belongsToMany(Post, {
+  through: Upvote,
 });
 
 module.exports = sequelize;
