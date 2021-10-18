@@ -172,7 +172,7 @@ const Comments = ({ userId }) => {
   );
 };
 
-export function UserProfile() {
+export default function UserProfile() {
   const { userId } = useParams();
 
   const [value, setValue] = useState(0);
