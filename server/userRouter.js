@@ -38,6 +38,25 @@ async function deleteUser(id) {
   });
 }
 
+async function changePassword(data, id) {
+  const user = await User.unscoped().findByPk(id);
+  console.log(data);
+  if (user.password === data.oldPassword) {
+    await User.update(
+      {
+        password: data.newPassword,
+      },
+      {
+        where: {
+          id,
+        },
+      }
+    );
+  } else {
+    throw new Error();
+  }
+}
+
 async function loginUser(data) {
   let user = await User.unscoped().findOne({
     where: {
@@ -119,7 +138,17 @@ userRouter.get("/:id", async (req, res, next) => {
   }
 });
 
-userRouter.put("/:id", async (req, res, next) => {
+userRouter.put("/changePassword", authMiddleware, async (req, res, next) => {
+  try {
+    console.log(req.body);
+    await changePassword(req.body, res.locals.userId);
+    res.status(StatusCodes.NO_CONTENT).end();
+  } catch (err) {
+    next(err);
+  }
+});
+
+userRouter.put("/:id", authMiddleware, async (req, res, next) => {
   try {
     await updateUser(req.params.id, req.body);
     res.status(StatusCodes.NO_CONTENT).end();
@@ -128,7 +157,7 @@ userRouter.put("/:id", async (req, res, next) => {
   }
 });
 
-userRouter.delete("/:id", async (req, res, next) => {
+userRouter.delete("/:id", authMiddleware, async (req, res, next) => {
   try {
     await deleteUser(req.params.id);
     res.status(StatusCodes.NO_CONTENT).end();

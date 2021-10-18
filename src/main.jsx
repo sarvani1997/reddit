@@ -12,8 +12,10 @@ import UserLogin from "./UserLoginPage";
 import Dashboard from "./DashboardPage";
 import Subreddit from "./SubredditPage";
 import Post from "./PostPage";
-import { UserProfile } from "./UserProfilePage";
+import UserProfile from "./UserProfilePage";
+import UserSettings from "./UserSettingsPage";
 import { Comment } from "./CommentPage";
+import PasswordChange from "./PasswordPage";
 
 async function validateToken(user) {
   const res = await request.get(`/users/${user.id}`);
@@ -88,6 +90,12 @@ const App = () => {
         </Route>
         <Route path="/r/:nick/comments/:commentId" exact>
           <Comment />
+        </Route>
+        <Route path="/settings" exact>
+          <UserSettings />
+        </Route>
+        <Route path="/settings/changePassword" exact>
+          <PasswordChange />
         </Route>
       </Switch>
     </div>
