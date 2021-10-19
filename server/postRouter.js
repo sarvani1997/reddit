@@ -4,7 +4,7 @@ const { StatusCodes } = require("http-status-codes");
 
 const sequelize = require("./postgres");
 const { getSubReddit } = require("./subRedditRouter");
-const { authMiddleware } = require("./userRouter");
+const { authMiddleware, relaxedAuthMiddleware } = require("./userRouter");
 
 const postRouter = express.Router();
 const { post: Post, subreddit: SubReddit, upvote: Upvote } = sequelize.models;
@@ -90,21 +90,7 @@ async function handleUpvote(postId, userId) {
   });
 }
 
-async function getUpvotes(userId) {
-  console.log(userId);
-  let upvotes = await Upvote.findAll({
-    where: {
-      userId,
-    },
-  });
-  upvotes = upvotes.map((upvote) => upvote.toJSON());
-  upvotes = upvotes.map((upvote) => {
-    return upvote.postId;
-  });
-  return upvotes;
-}
-
-async function getAllPosts(query) {
+async function getAllPosts(query, userId) {
   const page = query.page || 1;
   const where = {};
 
@@ -123,6 +109,20 @@ async function getAllPosts(query) {
     offset: (page - 1) * 20,
   });
   posts = posts.map((post) => post.toJSON());
+
+  if (userId) {
+    const upvotes = await Upvote.findAll({
+      where: {
+        postId: posts.map((post) => post.id),
+        userId,
+      },
+    });
+
+    for (const post of posts) {
+      post.userUpvoted = upvotes.some((u) => u.postId === post.id);
+    }
+  }
+
   return posts;
 }
 
@@ -176,20 +176,6 @@ postRouter.put("/:id/upvote", authMiddleware, async (req, res, next) => {
   }
 });
 
-postRouter.get("/upvotes", authMiddleware, async (req, res, next) => {
-  try {
-    console.log(res.locals);
-    const post = await getUpvotes(res.locals.userId);
-    if (!post) {
-      res.status(StatusCodes.NOT_FOUND).end();
-      return;
-    }
-    res.json(post);
-  } catch (err) {
-    next(err);
-  }
-});
-
 postRouter.get("/:id", async (req, res, next) => {
   try {
     const post = await getPost(req.params.id);
@@ -203,9 +189,9 @@ postRouter.get("/:id", async (req, res, next) => {
   }
 });
 
-postRouter.get("/", async (req, res, next) => {
+postRouter.get("/", relaxedAuthMiddleware, async (req, res, next) => {
   try {
-    const posts = await getAllPosts(req.query);
+    const posts = await getAllPosts(req.query, res.locals.userId);
     res.status(StatusCodes.OK).json(posts);
   } catch (err) {
     next(err);

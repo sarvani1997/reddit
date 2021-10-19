@@ -116,6 +116,15 @@ async function authMiddleware(req, res, next) {
   }
 }
 
+async function relaxedAuthMiddleware(req, res, next) {
+  try {
+    await validateToken(req.get("authorization"), res);
+    next();
+  } catch (err) {
+    next(err);
+  }
+}
+
 userRouter.post("/", async (req, res, next) => {
   try {
     const user = await createUser(req.body);
@@ -176,4 +185,4 @@ userRouter.post("/log_in", async (req, res, next) => {
   }
 });
 
-module.exports = { userRouter, authMiddleware };
+module.exports = { userRouter, authMiddleware, relaxedAuthMiddleware };

@@ -76,7 +76,6 @@ export default function Subreddit() {
   const [createPost, setCreatePost] = useSafeState(false);
   const [subreddit, setSubreddit] = useSafeState();
   const [posts, setPosts] = useSafeState([]);
-  const [upvotedPosts, setUpvotedPosts] = useState([]);
 
   useEffect(() => {
     async function get() {
@@ -96,14 +95,6 @@ export default function Subreddit() {
     get();
   }, []);
 
-  useEffect(() => {
-    async function get() {
-      const res = await request.get("/posts/upvotes");
-      setUpvotedPosts(res.data);
-    }
-    get();
-  }, []);
-
   const onClick = () => {
     if (createPost) {
       setCreatePost(false);
@@ -118,8 +109,6 @@ export default function Subreddit() {
       let posts = res.data;
       posts = posts.sort((a, b) => b.id - a.id);
       setPosts(posts);
-      const res1 = await request.get("/posts/upvotes");
-      setUpvotedPosts(res1.data);
     }
     get();
   };
@@ -130,10 +119,6 @@ export default function Subreddit() {
       onSuccess();
     }
   };
-
-  if (upvotedPosts.length === 0) {
-    return null;
-  }
 
   return (
     <div>
@@ -160,7 +145,6 @@ export default function Subreddit() {
           </CardContent>
         </Card>
         {posts.map((post) => {
-          const upvoteColor = upvotedPosts.includes(post.id);
           return (
             <Card
               key={post.id}
@@ -176,7 +160,7 @@ export default function Subreddit() {
                   >
                     <IconButton
                       aria-label="upVote"
-                      color={upvoteColor ? "primary" : "default"}
+                      color={post.userUpvoted ? "primary" : "default"}
                       onClick={() => upvote(post.id)}
                     >
                       <ThumbUpIcon />
