@@ -74,5 +74,9 @@ put('localhost:7500/posts/1/upvote', headers = {
 	'authorization': 'Bearer wQLWf4XkVM7guu3xT8rPx2FPue50sCUs'
 	})
 
+get('localhost:7500/posts/upvotes', headers = {
+	'authorization': 'Bearer wQLWf4XkVM7guu3xT8rPx2FPue50sCUs'
+	})
+
 
 

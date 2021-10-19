@@ -11,6 +11,10 @@ import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import Avatar from "@mui/material/Avatar";
+// import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+// import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import IconButton from "@mui/material/IconButton";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 
 import { request } from "./request";
 import { useSafeState } from "./hooks";
@@ -72,6 +76,7 @@ export default function Subreddit() {
   const [createPost, setCreatePost] = useSafeState(false);
   const [subreddit, setSubreddit] = useSafeState();
   const [posts, setPosts] = useSafeState([]);
+  const [upvotedPosts, setUpvotedPosts] = useState([]);
 
   useEffect(() => {
     async function get() {
@@ -84,7 +89,17 @@ export default function Subreddit() {
   useEffect(() => {
     async function get() {
       const res = await request.get(`/posts`, { params: { nick } });
-      setPosts(res.data);
+      let posts = res.data;
+      posts = posts.sort((a, b) => b.id - a.id);
+      setPosts(posts);
+    }
+    get();
+  }, []);
+
+  useEffect(() => {
+    async function get() {
+      const res = await request.get("/posts/upvotes");
+      setUpvotedPosts(res.data);
     }
     get();
   }, []);
@@ -100,10 +115,25 @@ export default function Subreddit() {
   const onSuccess = () => {
     async function get() {
       const res = await request.get(`/posts`, { params: { nick } });
-      setPosts(res.data);
+      let posts = res.data;
+      posts = posts.sort((a, b) => b.id - a.id);
+      setPosts(posts);
+      const res1 = await request.get("/posts/upvotes");
+      setUpvotedPosts(res1.data);
     }
     get();
   };
+
+  const upvote = async (postId) => {
+    const res = await request.put(`/posts/${postId}/upvote`);
+    if (res.status === 204) {
+      onSuccess();
+    }
+  };
+
+  if (upvotedPosts.length === 0) {
+    return null;
+  }
 
   return (
     <div>
@@ -130,32 +160,51 @@ export default function Subreddit() {
           </CardContent>
         </Card>
         {posts.map((post) => {
+          const upvoteColor = upvotedPosts.includes(post.id);
           return (
             <Card
               key={post.id}
               variant="outlined"
               sx={{ mt: 3, borderRadius: "5px" }}
             >
-              <CardContent>
-                <Stack direction="row" alignItems="center">
-                  <Avatar
-                    alt={post.user.name}
-                    src={post.user.avatar}
-                    sx={{ mr: 1.5, mb: 2 }}
-                  />
-                  <>{`Posted by u/${post.user.name}`}</>
-                </Stack>
-                <h3>{post.title}</h3>
-                <CardActions>
-                  <Button
-                    size="small"
-                    component={Link}
-                    to={`/r/${nick}/posts/${post.id}`}
+              <Stack direction="row" alignItems="center">
+                <CardContent>
+                  <Stack
+                    direction="column"
+                    alignItems="space-around
+"
                   >
-                    View More
-                  </Button>
-                </CardActions>
-              </CardContent>
+                    <IconButton
+                      aria-label="upVote"
+                      color={upvoteColor ? "primary" : "default"}
+                      onClick={() => upvote(post.id)}
+                    >
+                      <ThumbUpIcon />
+                    </IconButton>
+                    <span>{post.upvotes}</span>
+                  </Stack>
+                </CardContent>
+                <CardContent>
+                  <Stack direction="row" alignItems="center">
+                    <Avatar
+                      alt={post.user.name}
+                      src={post.user.avatar}
+                      sx={{ mr: 1.5, mb: 2 }}
+                    />
+                    <>{`Posted by u/${post.user.name}`}</>
+                  </Stack>
+                  <h3>{post.title}</h3>
+                  <CardActions>
+                    <Button
+                      size="small"
+                      component={Link}
+                      to={`/r/${nick}/posts/${post.id}`}
+                    >
+                      View More
+                    </Button>
+                  </CardActions>
+                </CardContent>
+              </Stack>
             </Card>
           );
         })}

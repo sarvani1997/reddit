@@ -1,5 +1,5 @@
 SELECT * from "upvotes" ;
-SELECT * from "posts" ;
+SELECT * from "logins" ;
 
 -- DROP TABLE "upvotes"
 
