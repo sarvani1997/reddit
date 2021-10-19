@@ -30,7 +30,7 @@ async function getPost(id) {
 
 async function handleUpvote(postId, userId) {
   return sequelize.transaction(async (t) => {
-    console.log(postId, userId);
+    console.log(userId);
     const post = await getPost(postId);
     const existingUpvotes = await Upvote.findAll(
       {
@@ -88,6 +88,20 @@ async function handleUpvote(postId, userId) {
       );
     }
   });
+}
+
+async function getUpvotes(userId) {
+  console.log(userId);
+  let upvotes = await Upvote.findAll({
+    where: {
+      userId,
+    },
+  });
+  upvotes = upvotes.map((upvote) => upvote.toJSON());
+  upvotes = upvotes.map((upvote) => {
+    return upvote.postId;
+  });
+  return upvotes;
 }
 
 async function getAllPosts(query) {
@@ -157,6 +171,20 @@ postRouter.put("/:id/upvote", authMiddleware, async (req, res, next) => {
   try {
     const upvote = await handleUpvote(req.params.id, res.locals.userId);
     res.status(StatusCodes.NO_CONTENT).json(upvote);
+  } catch (err) {
+    next(err);
+  }
+});
+
+postRouter.get("/upvotes", authMiddleware, async (req, res, next) => {
+  try {
+    console.log(res.locals);
+    const post = await getUpvotes(res.locals.userId);
+    if (!post) {
+      res.status(StatusCodes.NOT_FOUND).end();
+      return;
+    }
+    res.json(post);
   } catch (err) {
     next(err);
   }
