@@ -3,12 +3,12 @@ const { StatusCodes } = require("http-status-codes");
 const express = require("express");
 
 const sequelize = require("./postgres");
-const { authMiddleware } = require("./userRouter");
+const { authMiddleware, relaxedAuthMiddleware } = require("./userRouter");
 const { getSubReddit } = require("./subRedditRouter");
 const { getPost } = require("./postRouter");
 
 const commentRouter = express.Router();
-const { comment: Comment } = sequelize.models;
+const { comment: Comment, upvote: Upvote } = sequelize.models;
 
 const commentAllowedFields = ["text", "postId"];
 
@@ -32,7 +32,69 @@ async function getComment(id) {
   return comment.toJSON();
 }
 
-async function getAllComments(query) {
+async function handleUpvote(commentId, userId) {
+  return sequelize.transaction(async (t) => {
+    console.log(userId);
+    const comment = await getComment(commentId);
+    const existingUpvotes = await Upvote.findAll(
+      {
+        where: {
+          userId,
+          commentId,
+        },
+      },
+      {
+        transaction: t,
+      }
+    );
+    let { upvotes } = comment;
+    if (existingUpvotes.length === 0) {
+      upvotes = (upvotes || 0) + 1;
+      await Comment.update(
+        { upvotes },
+        {
+          where: {
+            id: commentId,
+          },
+        },
+        {
+          transaction: t,
+        }
+      );
+      await Upvote.create(
+        { commentId, userId },
+        {
+          transaction: t,
+        }
+      );
+    } else if (existingUpvotes.length > 0) {
+      await Upvote.destroy(
+        {
+          where: {
+            commentId,
+            userId,
+          },
+        },
+        {
+          transaction: t,
+        }
+      );
+      await Comment.update(
+        { upvotes: upvotes - 1 },
+        {
+          where: {
+            id: commentId,
+          },
+        },
+        {
+          transaction: t,
+        }
+      );
+    }
+  });
+}
+
+async function getAllComments(query, userId) {
   const page = query.page || 1;
   const where = {};
 
@@ -50,6 +112,20 @@ async function getAllComments(query) {
     offset: (page - 1) * 20,
   });
   comments = comments.map((comment) => comment.toJSON());
+
+  if (userId) {
+    const upvotes = await Upvote.findAll({
+      where: {
+        commentId: comments.map((comment) => comment.id),
+        userId,
+      },
+    });
+
+    for (const comment of comments) {
+      comment.userUpvoted = upvotes.some((u) => u.commentId === comment.id);
+    }
+  }
+
   return comments;
 }
 
@@ -107,10 +183,19 @@ commentRouter.get("/:id", async (req, res, next) => {
   }
 });
 
-commentRouter.get("/", async (req, res, next) => {
+commentRouter.get("/", relaxedAuthMiddleware, async (req, res, next) => {
   try {
-    const comments = await getAllComments(req.query);
+    const comments = await getAllComments(req.query, res.locals.userId);
     res.status(StatusCodes.OK).json(comments);
+  } catch (err) {
+    next(err);
+  }
+});
+
+commentRouter.put("/:id/upvote", authMiddleware, async (req, res, next) => {
+  try {
+    const upvote = await handleUpvote(req.params.id, res.locals.userId);
+    res.status(StatusCodes.NO_CONTENT).json(upvote);
   } catch (err) {
     next(err);
   }
