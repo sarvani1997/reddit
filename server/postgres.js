@@ -87,6 +87,7 @@ Post.belongsTo(SubReddit, {
 
 const Comment = sequelize.define("comment", {
   text: DataTypes.TEXT,
+  upvotes: DataTypes.INTEGER,
 });
 
 Comment.belongsTo(User, {
@@ -112,6 +113,10 @@ Post.belongsToMany(User, {
 });
 
 User.belongsToMany(Post, {
+  through: Upvote,
+});
+
+Comment.belongsToMany(User, {
   through: Upvote,
 });
 

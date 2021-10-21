@@ -5,6 +5,8 @@ import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
 import Stack from "@mui/material/Stack";
+import IconButton from "@mui/material/IconButton";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 
 import { request } from "./request";
 
@@ -73,6 +75,13 @@ const Comment = ({ comment, onSuccess, currentUser }) => {
     onSuccess();
   };
 
+  const upvote = async (commentId) => {
+    const res = await request.put(`/comments/${commentId}/upvote`);
+    if (res.status === 204) {
+      onSuccess();
+    }
+  };
+
   console.log(comment.subreddit.userId, currentUser.id);
 
   return (
@@ -87,6 +96,14 @@ const Comment = ({ comment, onSuccess, currentUser }) => {
             />
             <>{`u/${comment.user.name}`}</>
           </Stack>
+          <IconButton
+            aria-label="upVote"
+            color={comment.userUpvoted ? "primary" : "default"}
+            onClick={() => upvote(comment.id)}
+          >
+            <ThumbUpIcon />
+          </IconButton>
+          <span>{comment.upvotes}</span>
           <div>{comment.text}</div>
         </Box>
       ) : (
