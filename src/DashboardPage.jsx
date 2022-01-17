@@ -1,24 +1,24 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 
-import Container from "@mui/material/Container";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
-import ListItemButton from "@mui/material/ListItemButton";
-import Button from "@mui/material/Button";
-import Stack from "@mui/material/Stack";
-import TextField from "@mui/material/TextField";
-import Avatar from "@mui/material/Avatar";
+import Container from '@mui/material/Container';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemButton from '@mui/material/ListItemButton';
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
+import TextField from '@mui/material/TextField';
+import Avatar from '@mui/material/Avatar';
 
-import { request } from "./request";
+import { request } from './request';
 
 const CreateSubreddit = ({ setCreateSubreddit, onSuccess }) => {
-  const [name, setName] = useState("");
-  const [nick, setNick] = useState("");
+  const [name, setName] = useState('');
+  const [nick, setNick] = useState('');
 
   const create = async () => {
     const res = await request.post(`/subreddit`, {
@@ -56,7 +56,7 @@ const CreateSubreddit = ({ setCreateSubreddit, onSuccess }) => {
           value={nick}
           onChange={(e) => setNick(e.target.value)}
         />
-        <Button type="submit" sx={{ width: "100%" }} variant="contained">
+        <Button type="submit" sx={{ width: '100%' }} variant="contained">
           Submit
         </Button>
       </form>
