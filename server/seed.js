@@ -26,7 +26,7 @@ async function seed() {
 
   // users
 
-  const users = [...Array(10).keys()].map(() => ({
+  const users = [...Array(50).keys()].map(() => ({
     name: faker.name.firstName(),
     email: faker.internet.email(),
     password: faker.internet.password(),
@@ -36,9 +36,9 @@ async function seed() {
 
   // Subreddit : name, nick, userId
 
-  const subreddits = [...Array(10).keys()].map(() => ({
+  const subreddits = [...Array(100).keys()].map(() => ({
     name: faker.lorem.words(),
-    nick: faker.lorem.word(),
+    nick: faker.internet.userName(),
     userId: faker.datatype.number({
       min: 1,
       max: 10,
@@ -48,7 +48,7 @@ async function seed() {
 
   // Post: title, text, userId, subredditId
 
-  const posts = [...Array(100).keys()].map(() => ({
+  const posts = [...Array(1000).keys()].map(() => ({
     title: faker.lorem.sentence(),
     text: faker.lorem.paragraph(),
     userId: faker.datatype.number({
@@ -66,7 +66,7 @@ async function seed() {
 
   // Comment: text, userId, subredditId, postId
 
-  const comments = [...Array(1000).keys()].map(() => ({
+  const comments = [...Array(10000).keys()].map(() => ({
     text: faker.lorem.lines(),
     userId: faker.datatype.number({
       min: 1,

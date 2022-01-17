@@ -1,5 +1,5 @@
-const { Sequelize, DataTypes } = require("sequelize");
-const { prettify } = require("sql-log-prettifier");
+const { Sequelize, DataTypes } = require('sequelize');
+const { prettify } = require('sql-log-prettifier');
 
 const sequelize = new Sequelize(
   process.env.DB_NAME,
@@ -7,7 +7,7 @@ const sequelize = new Sequelize(
   process.env.DB_PASSWORD,
   {
     host: process.env.DB_HOST,
-    dialect: "postgres",
+    dialect: 'postgres',
     logging: (s) => {
       const string = prettify(s);
       console.log(string);
@@ -18,7 +18,7 @@ const sequelize = new Sequelize(
 // User
 
 const User = sequelize.define(
-  "user",
+  'user',
   {
     name: DataTypes.STRING,
     email: {
@@ -34,24 +34,24 @@ const User = sequelize.define(
   },
   {
     defaultScope: {
-      attributes: { exclude: ["password"] },
+      attributes: { exclude: ['password'] },
     },
   }
 );
 
 // Login
 
-const Login = sequelize.define("login", {
+const Login = sequelize.define('login', {
   token: DataTypes.STRING,
 });
 
 Login.belongsTo(User, {
-  onDelete: "CASCADE",
+  onDelete: 'CASCADE',
 });
 
 // Subreddit : name, nick, userId
 
-const SubReddit = sequelize.define("subreddit", {
+const SubReddit = sequelize.define('subreddit', {
   name: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -64,47 +64,47 @@ const SubReddit = sequelize.define("subreddit", {
 });
 
 SubReddit.belongsTo(User, {
-  onDelete: "CASCADE",
+  onDelete: 'CASCADE',
 });
 
 // Post: title, text, userId, subredditId
 
-const Post = sequelize.define("post", {
+const Post = sequelize.define('post', {
   title: DataTypes.STRING,
   text: DataTypes.TEXT,
   upvotes: DataTypes.INTEGER,
 });
 
 Post.belongsTo(User, {
-  onDelete: "CASCADE",
+  onDelete: 'CASCADE',
 });
 
 Post.belongsTo(SubReddit, {
-  onDelete: "CASCADE",
+  onDelete: 'CASCADE',
 });
 
 // Comment: text, userId, subredditId, postId
 
-const Comment = sequelize.define("comment", {
+const Comment = sequelize.define('comment', {
   text: DataTypes.TEXT,
   upvotes: DataTypes.INTEGER,
 });
 
 Comment.belongsTo(User, {
-  onDelete: "CASCADE",
+  onDelete: 'CASCADE',
 });
 
 Comment.belongsTo(SubReddit, {
-  onDelete: "CASCADE",
+  onDelete: 'CASCADE',
 });
 
 Comment.belongsTo(Post, {
-  onDelete: "CASCADE",
+  onDelete: 'CASCADE',
 });
 
 // Upvote: postId, userId, count
 
-const Upvote = sequelize.define("upvote", {
+const Upvote = sequelize.define('upvote', {
   vote: DataTypes.BOOLEAN,
 });
 
@@ -112,12 +112,8 @@ Post.belongsToMany(User, {
   through: Upvote,
 });
 
-User.belongsToMany(Post, {
-  through: Upvote,
-});
-
-Comment.belongsToMany(User, {
-  through: Upvote,
-});
+// Comment.belongsToMany(User, {
+//   through: Upvote,
+// });
 
 module.exports = sequelize;
