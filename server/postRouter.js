@@ -1,15 +1,15 @@
-const _ = require("lodash");
-const express = require("express");
-const { StatusCodes } = require("http-status-codes");
+const _ = require('lodash');
+const express = require('express');
+const { StatusCodes } = require('http-status-codes');
 
-const sequelize = require("./postgres");
-const { getSubReddit } = require("./subRedditRouter");
-const { authMiddleware, relaxedAuthMiddleware } = require("./userRouter");
+const sequelize = require('./postgres');
+const { getSubReddit } = require('./subRedditRouter');
+const { authMiddleware, relaxedAuthMiddleware } = require('./userRouter');
 
 const postRouter = express.Router();
 const { post: Post, subreddit: SubReddit, upvote: Upvote } = sequelize.models;
 
-const postAllowedFields = ["title", "text", "subredditId"];
+const postAllowedFields = ['title', 'text', 'subredditId'];
 
 async function createPost(_data, userId) {
   let data = _.pick(_data, postAllowedFields);
@@ -23,7 +23,7 @@ async function getPost(id) {
     where: {
       id,
     },
-    include: ["user", "subreddit"],
+    include: ['user', 'subreddit'],
   });
   return post.toJSON();
 }
@@ -104,7 +104,8 @@ async function getAllPosts(query, userId) {
 
   let posts = await Post.findAll({
     where,
-    include: ["user", "subreddit"],
+    order: [['id', 'DESC']],
+    include: ['user', 'subreddit'],
     limit: 20,
     offset: (page - 1) * 20,
   });
@@ -127,7 +128,7 @@ async function getAllPosts(query, userId) {
 }
 
 async function updatePost(id, _data, userId) {
-  const data = _.pick(_data, ["text"]);
+  const data = _.pick(_data, ['text']);
 
   const post = await getPost(id);
   const subreddit = await SubReddit.findByPk(post.subredditId);
@@ -158,7 +159,7 @@ async function deletePost(id, userId) {
   }
 }
 
-postRouter.post("/", authMiddleware, async (req, res, next) => {
+postRouter.post('/', authMiddleware, async (req, res, next) => {
   try {
     const post = await createPost(req.body, res.locals.userId);
     res.status(StatusCodes.CREATED).json(post);
@@ -167,7 +168,7 @@ postRouter.post("/", authMiddleware, async (req, res, next) => {
   }
 });
 
-postRouter.put("/:id/upvote", authMiddleware, async (req, res, next) => {
+postRouter.put('/:id/upvote', authMiddleware, async (req, res, next) => {
   try {
     const upvote = await handleUpvote(req.params.id, res.locals.userId);
     res.status(StatusCodes.NO_CONTENT).json(upvote);
@@ -176,7 +177,7 @@ postRouter.put("/:id/upvote", authMiddleware, async (req, res, next) => {
   }
 });
 
-postRouter.get("/:id", async (req, res, next) => {
+postRouter.get('/:id', async (req, res, next) => {
   try {
     const post = await getPost(req.params.id);
     if (!post) {
@@ -189,7 +190,7 @@ postRouter.get("/:id", async (req, res, next) => {
   }
 });
 
-postRouter.get("/", relaxedAuthMiddleware, async (req, res, next) => {
+postRouter.get('/', relaxedAuthMiddleware, async (req, res, next) => {
   try {
     const posts = await getAllPosts(req.query, res.locals.userId);
     res.status(StatusCodes.OK).json(posts);
@@ -198,7 +199,7 @@ postRouter.get("/", relaxedAuthMiddleware, async (req, res, next) => {
   }
 });
 
-postRouter.put("/:id", authMiddleware, async (req, res, next) => {
+postRouter.put('/:id', authMiddleware, async (req, res, next) => {
   try {
     const update = await updatePost(req.params.id, req.body, res.locals.userId);
     if (update) {
@@ -211,7 +212,7 @@ postRouter.put("/:id", authMiddleware, async (req, res, next) => {
   }
 });
 
-postRouter.delete("/:id", authMiddleware, async (req, res, next) => {
+postRouter.delete('/:id', authMiddleware, async (req, res, next) => {
   try {
     const deleted = await deletePost(req.params.id, res.locals.userId);
     if (deleted) {

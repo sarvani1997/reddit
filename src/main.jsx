@@ -1,21 +1,27 @@
-import ReactDOM from "react-dom";
-import { useState, useEffect, StrictMode } from "react";
-import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
-import "./index.css";
-import Avatar from "@mui/material/Avatar";
-import Stack from "@mui/material/Stack";
-import Button from "@mui/material/Button";
+import ReactDOM from 'react-dom';
+import { useState, useEffect, StrictMode } from 'react';
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+  Link,
+  Redirect,
+} from 'react-router-dom';
+import './index.css';
+import Avatar from '@mui/material/Avatar';
+import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
 
-import { request } from "./request";
-import SignUpForm from "./SignUpFormPage";
-import UserLogin from "./UserLoginPage";
-import Dashboard from "./DashboardPage";
-import Subreddit from "./SubredditPage";
-import Post from "./PostPage";
-import UserProfile from "./UserProfilePage";
-import UserSettings from "./UserSettingsPage";
-import { Comment } from "./CommentPage";
-import PasswordChange from "./PasswordPage";
+import { request } from './request';
+import SignUpForm from './SignUpFormPage';
+import UserLogin from './UserLoginPage';
+import Dashboard from './DashboardPage';
+import Subreddit from './SubredditPage';
+import Post from './PostPage';
+import UserProfile from './UserProfilePage';
+import UserSettings from './UserSettingsPage';
+import { Comment } from './CommentPage';
+import PasswordChange from './PasswordPage';
 
 async function validateToken(user) {
   const res = await request.get(`/users/${user.id}`);
@@ -28,7 +34,7 @@ async function validateToken(user) {
 
 const App = () => {
   const [user, setUser] = useState(() => {
-    const u = localStorage.getItem("user");
+    const u = localStorage.getItem('user');
     if (u) {
       return JSON.parse(u);
     }
@@ -48,7 +54,7 @@ const App = () => {
         const validUser = await validateToken(user);
         if (validUser === false) {
           setUser(undefined);
-          localStorage.removeItem("user");
+          localStorage.removeItem('user');
         }
       }
     }
@@ -97,6 +103,9 @@ const App = () => {
         <Route path="/settings/changePassword" exact>
           <PasswordChange />
         </Route>
+        <Route>
+          <Redirect to="/dashboard" />
+        </Route>
       </Switch>
     </div>
   );
@@ -108,5 +117,5 @@ ReactDOM.render(
       <App />
     </StrictMode>
   </Router>,
-  document.getElementById("root")
+  document.getElementById('root')
 );

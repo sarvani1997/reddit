@@ -1,7 +1,7 @@
 -- EXPLAIN ANALYSE SELECT * from "posts" WHERE "userId"='1';
 
 -- DROP TABLE "upvotes"
-SELECT * from "comments" ;
+SELECT * from "users" ;
 
 -- EXPLAIN ANALYSE SELECT
 
