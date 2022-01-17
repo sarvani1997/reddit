@@ -48,10 +48,10 @@ delete('localhost:7500/subreddit/1', headers = {
 	'authorization': 'Bearer lEnxC7NSxrXQl8qApRFbAzTvWHPo4FLm'
 	})
 
-get('localhost:7500/comments/1')
+get('localhost:7500/comments/?postId=161')
 
 post('localhost:7500/comments', headers = {
-	'authorization': 'Bearer lEnxC7NSxrXQl8qApRFbAzTvWHPo4FLm'
+	'authorization': 'Bearer T7wB81ilYea3syHOGtH4LumXfm0nvOas'
 	}, json={
 	'text': 'ramana',
 	'postId': 2

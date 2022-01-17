@@ -1,20 +1,20 @@
 -- EXPLAIN ANALYSE SELECT * from "posts" WHERE "userId"='1';
 
 -- DROP TABLE "upvotes"
--- SELECT * from "upvotes" ;
+SELECT * from "comments" ;
 
-EXPLAIN ANALYSE SELECT
+-- EXPLAIN ANALYSE SELECT
 
-  "vote",
-  "createdAt",
-  "updatedAt",
-  "postId",
-  "userId"
-FROM
-  "upvotes" AS "upvote"
-WHERE
-  "upvote"."userId" = 1
-  AND "upvote"."postId" = '279';
+--   "vote",
+--   "createdAt",
+--   "updatedAt",
+--   "postId",
+--   "userId"
+-- FROM
+--   "upvotes" AS "upvote"
+-- WHERE
+--   "upvote"."userId" = 1
+--   AND "upvote"."postId" = '279';
 
 
 -- ALTER TABLE "users" ADD "upvotes" INTEGER;

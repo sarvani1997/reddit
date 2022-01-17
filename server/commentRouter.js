@@ -1,16 +1,16 @@
-const _ = require("lodash");
-const { StatusCodes } = require("http-status-codes");
-const express = require("express");
+const _ = require('lodash');
+const { StatusCodes } = require('http-status-codes');
+const express = require('express');
 
-const sequelize = require("./postgres");
-const { authMiddleware, relaxedAuthMiddleware } = require("./userRouter");
-const { getSubReddit } = require("./subRedditRouter");
-const { getPost } = require("./postRouter");
+const sequelize = require('./postgres');
+const { authMiddleware, relaxedAuthMiddleware } = require('./userRouter');
+const { getSubReddit } = require('./subRedditRouter');
+const { getPost } = require('./postRouter');
 
 const commentRouter = express.Router();
 const { comment: Comment, upvote: Upvote } = sequelize.models;
 
-const commentAllowedFields = ["text", "postId"];
+const commentAllowedFields = ['text', 'postId'];
 
 async function createComment(_data, userId) {
   let data = _.pick(_data, commentAllowedFields);
@@ -27,7 +27,7 @@ async function getComment(id) {
     where: {
       id,
     },
-    include: ["user", "subreddit", "post"],
+    include: ['user', 'subreddit', 'post'],
   });
   return comment.toJSON();
 }
@@ -107,30 +107,31 @@ async function getAllComments(query, userId) {
 
   let comments = await Comment.findAll({
     where,
-    include: ["user", "subreddit", "post"],
+    include: ['user', 'subreddit', 'post'],
     limit: 20,
     offset: (page - 1) * 20,
   });
   comments = comments.map((comment) => comment.toJSON());
+  console.log(comments);
 
-  if (userId) {
-    const upvotes = await Upvote.findAll({
-      where: {
-        commentId: comments.map((comment) => comment.id),
-        userId,
-      },
-    });
+  // if (userId) {
+  //   const upvotes = await Upvote.findAll({
+  //     where: {
+  //       commentId: comments.map((comment) => comment.id),
+  //       userId,
+  //     },
+  //   });
 
-    for (const comment of comments) {
-      comment.userUpvoted = upvotes.some((u) => u.commentId === comment.id);
-    }
-  }
+  //   for (const comment of comments) {
+  //     comment.userUpvoted = upvotes.some((u) => u.commentId === comment.id);
+  //   }
+  // }
 
   return comments;
 }
 
 async function updateComment(id, _data, userId) {
-  const data = _.pick(_data, ["text"]);
+  const data = _.pick(_data, ['text']);
 
   const comment = await getComment(id);
   const subreddit = await getSubReddit(comment.subredditId);
@@ -161,7 +162,7 @@ async function deleteComment(id, userId) {
   return false;
 }
 
-commentRouter.post("/", authMiddleware, async (req, res, next) => {
+commentRouter.post('/', authMiddleware, async (req, res, next) => {
   try {
     const comment = await createComment(req.body, res.locals.userId);
     res.status(StatusCodes.CREATED).json(comment);
@@ -170,7 +171,7 @@ commentRouter.post("/", authMiddleware, async (req, res, next) => {
   }
 });
 
-commentRouter.get("/:id", async (req, res, next) => {
+commentRouter.get('/:id', async (req, res, next) => {
   try {
     const comment = await getComment(req.params.id);
     if (!comment) {
@@ -183,7 +184,7 @@ commentRouter.get("/:id", async (req, res, next) => {
   }
 });
 
-commentRouter.get("/", relaxedAuthMiddleware, async (req, res, next) => {
+commentRouter.get('/', relaxedAuthMiddleware, async (req, res, next) => {
   try {
     const comments = await getAllComments(req.query, res.locals.userId);
     res.status(StatusCodes.OK).json(comments);
@@ -192,7 +193,7 @@ commentRouter.get("/", relaxedAuthMiddleware, async (req, res, next) => {
   }
 });
 
-commentRouter.put("/:id/upvote", authMiddleware, async (req, res, next) => {
+commentRouter.put('/:id/upvote', authMiddleware, async (req, res, next) => {
   try {
     const upvote = await handleUpvote(req.params.id, res.locals.userId);
     res.status(StatusCodes.NO_CONTENT).json(upvote);
@@ -201,7 +202,7 @@ commentRouter.put("/:id/upvote", authMiddleware, async (req, res, next) => {
   }
 });
 
-commentRouter.put("/:id", authMiddleware, async (req, res, next) => {
+commentRouter.put('/:id', authMiddleware, async (req, res, next) => {
   try {
     const update = await updateComment(
       req.params.id,
@@ -218,7 +219,7 @@ commentRouter.put("/:id", authMiddleware, async (req, res, next) => {
   }
 });
 
-commentRouter.delete("/:id", authMiddleware, async (req, res, next) => {
+commentRouter.delete('/:id', authMiddleware, async (req, res, next) => {
   try {
     const deleted = await deleteComment(req.params.id, res.locals.userId);
     if (deleted) {

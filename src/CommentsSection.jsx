@@ -1,14 +1,14 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import Box from "@mui/material/Box";
-import Avatar from "@mui/material/Avatar";
-import Stack from "@mui/material/Stack";
-import IconButton from "@mui/material/IconButton";
-import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import Box from '@mui/material/Box';
+import Avatar from '@mui/material/Avatar';
+import Stack from '@mui/material/Stack';
+import IconButton from '@mui/material/IconButton';
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 
-import { request } from "./request";
+import { request } from './request';
 
 const EditComment = ({ comment, setShowEdit, onSuccess }) => {
   const [text, setText] = useState(comment.text);
@@ -98,8 +98,8 @@ const Comment = ({ comment, onSuccess, currentUser }) => {
           </Stack>
           <IconButton
             aria-label="upVote"
-            color={comment.userUpvoted ? "primary" : "default"}
-            onClick={() => upvote(comment.id)}
+            // color={comment.userUpvoted ? 'primary' : 'default'}
+            // onClick={() => upvote(comment.id)}
           >
             <ThumbUpIcon />
           </IconButton>
@@ -130,7 +130,7 @@ const Comment = ({ comment, onSuccess, currentUser }) => {
 };
 
 const AddComment = ({ postId, onSuccess }) => {
-  const [text, setText] = useState("");
+  const [text, setText] = useState('');
 
   const onComment = async () => {
     const res = await request.post(`/comments`, {
@@ -143,7 +143,7 @@ const AddComment = ({ postId, onSuccess }) => {
   const onSubmit = (e) => {
     e.preventDefault();
     onComment();
-    setText("");
+    setText('');
   };
 
   return (
